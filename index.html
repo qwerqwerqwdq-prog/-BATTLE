@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Род Роббертсов — Первые Дуксы Центроземья</title>
-<meta name="description" content="Интерактивное родовое древо Роббертсов: восемь поколений, семь линий, династии Кадас и Сар — с летописью, родством и топом достижений.">
+<meta name="description" content="Интерактивное родовое древо Роббертсов: восемь поколений, семь линий, дома Кадас, Сар и Вум — с летописью, родством и топом достижений.">
 <meta name="theme-color" content="#14110c">
 <meta name="color-scheme" content="only light">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='6.5' y='6.5' width='11' height='11' fill='%23c8a565' transform='rotate(45 12 12)'/%3E%3C/svg%3E">
@@ -126,7 +126,9 @@
   .dimmed{opacity:.12}
 
   #legend{position:fixed;left:calc(16px + var(--sal));bottom:calc(16px + var(--sab));z-index:40;max-width:290px;padding:13px 16px;background:rgba(20,17,13,.88);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid var(--hair);border-radius:10px;animation:rise .7s .25s cubic-bezier(.22,.8,.3,1) both}
-  #legend h4{font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:9px}
+  #legend h4{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:9px}
+  #legendHide{display:grid;place-items:center;width:20px;height:20px;margin:-3px -5px -3px 6px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--faint);cursor:pointer;opacity:.75;transition:opacity .2s,background .2s,color .2s,transform .25s}
+  #legendHide:hover{opacity:1;color:var(--text);background:rgba(255,255,255,.08);transform:rotate(90deg)}
   .lg-row{display:flex;align-items:center;gap:9px;font-size:10.5px;color:var(--muted);margin-top:6px;line-height:1.4}
   .lg-line{width:15px;height:0;flex:none;border-top:2px solid}
   .lg-r{width:7px;height:7px;flex:none;transform:rotate(45deg);background:var(--accent)}
@@ -150,6 +152,15 @@
   #zSlider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--accent);border:none;box-shadow:0 0 0 3px rgba(20,17,12,.85)}
   #zVal{min-width:40px;text-align:center;font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--muted);font-variant-numeric:tabular-nums}
   #legendToggle{display:none;position:fixed;left:calc(14px + var(--sal));bottom:calc(14px + var(--sab));z-index:41;width:42px;height:42px;place-items:center;background:rgba(27,23,18,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid var(--hair);border-radius:50%;color:var(--accent);cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.45)}
+  /* десктоп: легенду можно свернуть — крестиком в шапке; возврат — пилюлей слева внизу */
+  @media (min-width:761px){
+    #legend.off{display:none}
+    #legendToggle{width:auto;height:34px;padding:0 14px 0 12px;border-radius:18px}
+    #legend.off + #legendToggle{display:inline-flex;align-items:center;gap:7px}
+    #legend.off + #legendToggle:hover{border-color:var(--accent)}
+    #legendToggle .lt-l{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);transition:color .2s;white-space:nowrap}
+    #legend.off + #legendToggle:hover .lt-l{color:var(--accent)}
+  }
 
   #panel{position:fixed;top:var(--hh);right:0;bottom:0;width:350px;z-index:45;background:var(--panel);border-left:1px solid var(--hair);padding:28px 26px 40px;overflow-y:auto;transform:translateX(105%);transition:transform .45s cubic-bezier(.22,.8,.3,1)}
   #panel.open{transform:none}
@@ -225,6 +236,7 @@
     #legend{left:12px;right:12px;bottom:calc(66px + var(--sab));max-width:none;animation:none;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .3s ease,transform .3s ease}
     #legend.open{opacity:1;transform:none;pointer-events:auto}
     #legendToggle{display:grid}
+    #legendToggle .lt-l{display:none}
     #hint,#legend .lg-date{display:none}
     #zoomer{right:calc(10px + var(--sar));bottom:calc(10px + var(--sab));gap:1px;padding:4px 7px}
     #zSlider{width:84px}
@@ -986,10 +998,11 @@ body.reveal #hint{animation:fin 1.1s ease .65s both}
 </main>
 
 <aside id="legend">
-  <h4>Как читать древо</h4>
+  <h4>Как читать древо<button id="legendHide" aria-label="Свернуть подсказку" title="Свернуть"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h4>
   <div class="lg-row"><span class="lg-line" style="border-color:#8a93a6"></span>приёмные дети</div>
   <div class="lg-row"><span class="lg-line" style="border-color:#7f9779"></span>династия Кадас</div>
   <div class="lg-row"><span class="lg-line" style="border-color:#8b7fa8"></span>династия Сар</div>
+  <div class="lg-row"><span class="lg-line" style="border-color:#5c8a85"></span>дом Вум</div>
   <div class="lg-row"><span class="lg-line" style="border-color:#c8a565"></span>сыновья</div>
   <div class="lg-row"><span class="lg-line" style="border-color:#c68363"></span>дочери</div>
   <div class="lg-row"><span class="lg-line" style="border-color:#6e6552;border-top-style:dashed"></span>прежние браки</div>
@@ -1001,7 +1014,7 @@ body.reveal #hint{animation:fin 1.1s ease .65s both}
   <div class="lg-date">Сейчас: Первый день, Первая неделя, Первый месяц · 19.769 год от пробуждения Оркена · 679 Ход (271 по новому календарю)</div>
 </aside>
 
-<button id="legendToggle" aria-label="Как читать древо"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 11.5V16"/></svg></button>
+<button id="legendToggle" aria-label="Как читать древо" title="Как читать древо"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 11.5V16"/></svg><span class="lt-l">Как читать древо</span></button>
 
 <div id="zoomer">
   <button id="zOut" aria-label="Отдалить"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
@@ -1071,7 +1084,8 @@ const GROUPS = {
   sons:     { name:'Сыновья',    color:'#c8a565' },
   daughters:{ name:'Дочери',     color:'#c68363' },
   kadas:    { name:'Кадасы',     color:'#7f9779' },
-  sar:      { name:'Сары',       color:'#8b7fa8' }
+  sar:      { name:'Сары',       color:'#8b7fa8' },
+  vum:      { name:'Вумы',       color:'#5c8a85' }
 };
 const SPOUSE_COLOR = '#4a4336';
 
@@ -1216,6 +1230,18 @@ const SAR_TREE = {
           ]}
       ]}
   ]
+};
+
+/* ── ДОМ ВУМ ── купеческий род, породнившийся с Роббертсами через третий брак
+   Джейкоба: та же общая сетка — глава дома в колонке Дёрти (V поколение);
+   его дочь Марьяна — супруга Джейкоба (якорь в древе Роббертсов), клановая
+   нить ведёт от союза Вума и Рольны к её карточке. */
+const VUM_TREE = {
+  id:'vumh', dname:'Дом Вум', group:'vum', name:'Вум', years:'—', tag:'глава дома · купец',
+  col0:4, bridge:{from:'vumh'},
+  note:'Небогатый купец с добрым имением — глава дома Вум. Имени его летопись не сохранила: известна лишь роль — отец Марьяны и хозяин имения, к которому род привёл родственным союзом. 11 марта 240-го за званым ужином задал жениху дочери острый вопрос о родословной — и получил ответ, после которого «задушил» вопросов больше не задавал.',
+  spouse:{ id:'rolna', name:'Рольна Вум', years:'—', sex:'f', sub:'супруга · мать Марьяны',
+    note:'Встретилась Джейкобу у больничной койки друга: в лазарете, где хворал Теймур, тот увидел двух женщин — Рольну Вум, будущую тёщу, и монахиню, чьё имя так и не узнал. От Рольны и узнал о её дочери Марьяне; кандидаток на женитьбу, по летописи, нашёл друг Теймур. Свадьбу сыграли совместной — вместе с женящимся Теймуром.' }
 };
 
 const ROBBERT_NOTE = 'Был жил Робберт — смутная личность: летопись не помнит ни его дел, ни точных лет, ни лица. Даже фамилии он при жизни не носил — имя его лишь позже легло в основу родовой фамилии Роббертсов. Достоверно одно: от неизвестной женщины он смог породить на свет Диалтона — через которого род и продолжился. Малообразованный крестьянин — даже имя своё коверкал; на момент смерти Робберту было восемьдесят лет: унёсла его эпидемия хаоса, добравшаяся до вартемберских земель.';
@@ -1384,8 +1410,8 @@ const TREE = {
           children:[
             { id:'jacob', name:'Джейкоб I Роббертс', years:'151 — 254', tag:'Патриарх XI · Дукс Чернополья · Дукс Территории Апостолов',
               note:'От наёмника и паладина Святого Воинства — через Командора Ордена — до XI Патриарха всея Покирстодовых земель; также регент Окурка, наследственный Праведник Дорог, Вождь Сухопутных путей и Дукс Территории Апостолов. В Сражении за Апостольск был тяжело ранен и отравлен, став живым символом борьбы; пережил плен у смуглых баббахистов (выкуп 8 000 000 дененов), провёл реорганизацию Святого Ордена и подписал мир с Роудом Вальтером («Да будет мир»); после войны с Филией отстроил огромное святилище в землях гигантов, ещё крепче объединив верующих. Вклад в Тронийский банк: 750 000 дененов под 10 % годовых. Для герцогини Егории и Леонарда — пример вдохновения; для Андрея Джоновича — «узурпатор, тиран и диктатор», с которым иметь дел тот не хочет совсем. Женат был трижды: первой была Маргарет — её он пережил, — затем Фелиция, а под конец жизни привёл в дом Марьяну Вум. От первых двух браков — четверо сыновей: Дэвид, Кирк, Кеннет и Родни; девочку из храма-приюта взял на попечительство и назвал Маргарет I в честь умершей первой жены; Марьяна под старость родила ему Альфреда. Хотел детей и семью: кандидаток на женитьбу нашёл друг Теймур — у его больничной койки Джейкоб встретил двух женщин: Рольну Вум, будущую тёщу, и монахиню, чьё имя так и не узнал; свадьбу сыграли совместной, вместе с женящимся Теймуром, а тесть на званом ужине задал острый вопрос о родословной Джейкоба — и тот «задушил» его аргументами. После покушения Лю Ци раскаявшийся маг «в искупление подарил Джейкобу вторую жизнь»; сам Джейкоб занялся иконописью — толкнули его туда попытки брата рисовать картины, — и сделал её культурной особенностью религии. Первой же инициативой на посту Патриарха выбил в Сдерживающем совете право вето — с тремя самоограничениями: не для личной защиты, не два раза подряд, снимается большинством совета. Возвёл Собор Святого Воинства на месте первого столкновения с подгорцами: миллион дененов, второй Собор в истории Яльвы, постоянный гарнизон в 8 000; впечатлённый бережной стройкой (ни одно дерево не тронуто) местный фейский клан Витальи сам предложил служить династии — Роббертсы стали третьей династией с собственным фейским кланом после Зенских и Кросвывильневых. «Роббертсова Дорога»: зажигательные снаряды по образцу кочевников из юношеских миссионерских походов, операция запасных библиотек и доброе соревнование двух конфессий — совместные социальные проекты с главным муллой для торговцев, ремесленников и обездоленных. С Тройгардерами заключил военный союз через крещение долгожданного ребёнка: посвящающим родителем согласился звать Тройгардера — «будет же ему что рассказать сверстникам». Умер в соборе, сидя на лавочке после службы, — с безмятежной улыбкой на лице; тело, как он и желал, с верным оружием и регалиями спит вечным сном в Соборе Святого Воинства имени Покисторда на всеобщем обозрении. Ходит слух, что после процессии одна никому неизвестная монахиня пришла проститься с Патриархом в одиночестве — и ей это разрешили...',
-              spouse:{ id:'maryana', name:'Марьяна Вум', years:'—', sub:'супруга · третий брак · мать Альфреда',
-                note:'Дочь Рольны Вум, рыжеволосая красавица с мальчишеским нравом: охотница и лучница, доучивалась на богослова, однажды месяц провела на Тюремном Острове — целилась в кабана, а подстрелила лошадь под самим Казилином Тройгардером. Вышла за Джейкоба, когда тому было под девяносто, и долго не могла зачать: ещё в юности получила тяжёлые травмы; после лечения у врачей наконец понесла. Пока муж томился в плену у смуглых баббахистов, деверь Леонард составлял для неё и будущего ребёнка особое «меню» — правильная подача, по его слову, делает еду вдвойне сытнее. Была с мужем во время осады Апостольска, малый ребёнок тогда находился у её родственников. Когда Альфред оказался при смерти, несла его к святому месту на руках — сын выжил чудом Покирстодова, а её саму вытянул монастырь: пережив послеродовую депрессию, она ушла туда, доверив мальчика монахине Иванье.' },
+              spouse:{ id:'maryana', name:'Марьяна Вум', years:'—', sub:'супруга · дом Вум · мать Альфреда',
+                note:'Дочь Рольны Вум, рыжеволосая красавица с мальчишеским нравом: охотница и лучница, доучивалась на богослова, однажды месяц провела на Тюремном Острове — целилась в кабана, а подстрелила лошадь под самим Казилином Тройгардером. Вышла за Джейкоба, когда тому было под девяносто, и долго не могла зачать: ещё в юности получила тяжёлые травмы; после лечения у врачей наконец понесла. Пока муж томился в плену у смуглых баббахистов, деверь Леонард составлял для неё и будущего ребёнка особое «меню» — правильная подача, по его слову, делает еду вдвойне сытнее. Была с мужем во время осады Апостольска, малый ребёнок тогда находился у её родственников. Когда Альфред оказался при смерти, несла его к святому месту на руках — сын выжил чудом Покирстодова, а её саму вытянул монастырь: пережив послеродовую депрессию, она ушла туда, доверив мальчика монахине Иванье.', clan:VUM_TREE },
               prevSpouses:[
                 { id:'felicia', name:'Фелиция', years:'—', sub:'супруга · второй брак',
                   note:'Вторая жена Джейкоба — от этого брака часть четверых сыновей. О её дальнейшей судьбе летопись умалчивает: достоверно известно лишь, что пережил муж первую жену, Маргарет.' },
@@ -1642,6 +1668,14 @@ const REL = {
     ]],
     kenneth: [10, [
       [10,'О судьбе Кеннета отец спрашивал в том же письме из плена']
+    ]],
+    vumh: [45, [
+      [25,'Сватовство выдержало званый ужин 11.03.240: на острый вопрос тестя о родословной ответил речью об основателе — «сделал достаточно»'],
+      [20,'Породнил купеческий дом с династией: свадьбу сыграли совместной — вместе с женящимся Теймуром']
+    ]],
+    rolna: [35, [
+      [20,'Будущую тёщу увидел у больничной койки хворавшего Теймура — в лазарете'],
+      [15,'От Рольны узнал о её дочери Марьяне: кандидаток на женитьбу нашёл друг Теймур']
     ]]
   },
   leonard: {
@@ -1732,6 +1766,14 @@ const REL = {
       [45,'«Не одной матери нельзя пережить своё дитя» — несла умирающего младенца к святому месту на руках'],
       [20,'Травмы юности — и всё же «после лечения у врачей наконец понесла»'],
       [15,'Пережив послеродовую депрессию, доверила сына монахине Иванье — ради его спасения']
+    ]],
+    vumh: [60, [
+      [30,'Отец устроил жениху званый ужин-испытание: острый вопрос о родословной — и ответ, после которого вопросов больше не задавали'],
+      [30,'Во время осады Апостольска её малый ребёнок был у родни — в имении отца']
+    ]],
+    rolna: [70, [
+      [35,'Мать рассказала о ней Джейкобу у больничной койки Теймура — так и появился жених'],
+      [35,'Пока Марьяна с мужем держала осаду Апостольска, мать берегла её малолетнего сына']
     ]]
   },
   alfred: {
@@ -1751,6 +1793,12 @@ const REL = {
     maryana: [70, [
       [45,'Мать несла его к святому месту на руках: «если и умрёт, то в материнских объятиях»'],
       [25,'Младенцем был при смерти — «выжил чудом Покирстодова» на её руках']
+    ]],
+    rolna: [30, [
+      [30,'Младенцем пережил осаду Апостольска у родни матери — «малый ребёнок тогда находился у её родственников»']
+    ]],
+    vumh: [25, [
+      [25,'Первые месяцы жизни — в имении деда-купца, пока родители были на войне']
     ]]
   },
   rodney_b: {
@@ -1981,11 +2029,160 @@ const REL = {
     galiana: [-10, [
       [-25,'Годы прятался от родни: «О его существовании так никто и не узнал. Видимо, он этого совершенно не желал»'],
       [15,'После разговора с Гальяной (247) всё же присоединился к основной группе Роббертсов']
+    ]],
+    ofelia: [50, [
+      [30,'Достоверно известен один союз: Офелия Сар из древнего вартемберского рода'],
+      [20,'Детей летопись ветви не называет — ветвь тени осталась без потомства']
     ]]
   },
   gum: {
     jacob: [20, [
       [20,'«Рад за родичей, что заняли такой высокий статус» — без фанатизма, по-вартемберски спокойно']
+    ]]
+  },
+
+  /* ── РОДОВЫЕ КЛАНЫ ── дом Вум и династии Кадас и Сар: очки хроники по карточкам
+     и летописям ветвей; прародителям Кадас и Сар хроника родственных счётов
+     не оставила — имена промежуточных колён не сохранились вовсе */
+
+  /* ДОМ ВУМ — купцы, породнившиеся с Патриархом через третий брак Джейкоба */
+  vumh: {
+    maryana: [65, [
+      [35,'Дочь — гордость дома: выдал за Патриарха Яльвы, породнив купцов с династией Роббертсов'],
+      [30,'Испытал жениха званым ужином 11.03.240 — острым вопросом о родословной']
+    ]],
+    jacob: [40, [
+      [25,'После ответа жениха на вопрос о родословной «задушил» вопросов больше не задавал — зятем доволен'],
+      [15,'Имение купца приняло родственный союз: род привёл к нему через дочь']
+    ]],
+    alfred: [60, [
+      [35,'Внук-наследник пережил войну в их имении — «малый ребёнок тогда находился у её родственников»'],
+      [25,'Долгожданный наследник Патриарха — продолжение и купеческого дома']
+    ]]
+  },
+  rolna: {
+    maryana: [75, [
+      [35,'Рассказала о дочери Джейкобу у больничной койки Теймура — так и появился жених'],
+      [40,'Пока дочь с мужем держала осаду Апостольска, берегла её малолетнего сына в имении']
+    ]],
+    jacob: [40, [
+      [20,'Сама рассказала гостю из лазарета о дочери — будущему мужу Марьяны'],
+      [20,'Свадьба дочери стала двойной: сыграли вместе с женящимся Теймуром']
+    ]],
+    alfred: [65, [
+      [40,'Малолетнего внука берегла в имении, пока родители были в осаждённом Апостольске'],
+      [25,'Внук — чудо Покирстодова: дочь годами лечилась у врачей ради зачатия']
+    ]]
+  },
+
+  /* ДИНАСТИЯ КАДАС — четыре века замка в Басло-фирентийских землях */
+  kadas: {
+    william: [55, [
+      [35,'Пережила мужа-основателя на несколько лет — и пала примерно к 130-му'],
+      [20,'Вышла за него из рода, четыре века державшего замок, — когда фамилия Роббертсов ещё ничего не значила']
+    ]],
+    petrk: [60, [
+      [35,'Отец — глава замка Кадас; дочь пережила обоих родителей'],
+      [25,'Пал от болезни годом раньше жены — за одну зиму замок потерял обоих хозяев']
+    ]],
+    francisk: [55, [
+      [30,'Мать: пала от болезни в другой день, чем отец'],
+      [25,'Родня по матери — та же древняя династия, что и по отцу']
+    ]],
+    zigmundk: [60, [
+      [35,'Младший брат принял замок после смерти родителей — и держит его поныне'],
+      [25,'Ветеран вартемберских войн, ушедший в мирную жизнь']
+    ]]
+  },
+  petrk: {
+    kadas: [55, [
+      [35,'Та самая Маргарет: дочь стала супругой основателя династии Роббертсов'],
+      [20,'Глава замка Кадас — и отец супруги основателя']
+    ]]
+  },
+  francisk: {
+    kadas: [50, [
+      [30,'Дочь стала супругой основателя династии Роббертсов'],
+      [20,'Жена Петра: пережила мужа недолгий срок — в другой день, но от того же недуга']
+    ]]
+  },
+  zigmundk: {
+    kadas: [60, [
+      [60,'Младший брат той самой Маргарет — супруги основателя: принял замок Кадас после смерти родителей']
+    ]],
+    alexk: [65, [
+      [40,'Сын, рождённый уже в мирные годы — после ухода отца с военной службы'],
+      [25,'Нынешний глава династии: замок живёт тихо — торговля, земля и память']
+    ]]
+  },
+  alexk: {
+    zigmundk: [60, [
+      [35,'Ветеран-отец ушёл из войн в мирную жизнь и принял замок после смерти родителей'],
+      [25,'Держит замок поныне — род четырёх веков не прерывается']
+    ]],
+    albertk: [65, [
+      [40,'Наследник: в нём род видит своё продолжение'],
+      [25,'Молодой Кадас — четыре века замка ещё не закончились']
+    ]]
+  },
+  albertk: {
+    alexk: [55, [
+      [30,'Сын нынешнего главы династии Кадас'],
+      [25,'Замок живёт тихо — торговля, земля и память о четырёх веках рода']
+    ]]
+  },
+
+  /* ДИНАСТИЯ САР — замок Сара по соседству с замком Кадас */
+  ofelia: {
+    richard: [55, [
+      [35,'Вышла за Ричарда Роббертса — так замок Сара породнился с династией Роббертсов'],
+      [20,'Его исчезновение из хроник оставило целям рода вечную строку: «Найти потерянного мужа»']
+    ]],
+    andres: [50, [
+      [50,'Отец — глава замка Сара: пал от болезни годом раньше матери']
+    ]],
+    alexsandr: [45, [
+      [45,'Мать: пала примерно к 130-му, пережив мужа недолгий срок']
+    ]],
+    nerks: [60, [
+      [60,'Родной брат Нерк: долго участвовал в вартемберских войнах, затем принял замок Сара и мирную жизнь']
+    ]]
+  },
+  andres: {
+    ofelia: [55, [
+      [35,'Отец Офелии и Нерка — глава замка Сара'],
+      [20,'Дочь породнила замок Сара с династией Роббертсов']
+    ]]
+  },
+  alexsandr: {
+    ofelia: [60, [
+      [40,'Дочь Офелия вышла за Ричарда Роббертса — замок Сара породнился с династией'],
+      [20,'Мать Офелии и Нерка: пережила мужа недолгий срок']
+    ]]
+  },
+  nerks: {
+    ofelia: [55, [
+      [55,'Родная сестра — та самая Офелия, что стала супругой Ричарда Роббертса']
+    ]],
+    alexs: [65, [
+      [40,'Сын, рождённый после войн: династия пошла по мирной линии отца'],
+      [25,'Нынешний глава династии Сар: держит замок, храня четыре века родной истории']
+    ]]
+  },
+  alexs: {
+    nerks: [60, [
+      [35,'Ветеран-отец: долго участвовал в вартемберских войнах, затем принял замок Сара'],
+      [25,'Сын рождён уже в мирные годы — после возвращения отца с войны']
+    ]],
+    alberts: [60, [
+      [35,'Наследник Александра: род продолжается'],
+      [25,'Тихо, спокойно и долго — как и задумывал странник четыре века назад']
+    ]]
+  },
+  alberts: {
+    alexs: [55, [
+      [30,'Сын нынешнего главы династии Сар'],
+      [25,'Наследник: продолжение рода — тихое, спокойное и долгое']
     ]]
   }
 };
@@ -2053,12 +2250,18 @@ $('#stats').innerHTML =
 /* ═══════════ 3. РАСКЛАДКА (полосная: перекрытия исключены) ═══════════ */
 
 let collapsed = new Set();
-(function foldFrom(n){
-  (n.children||[]).forEach(c => {
-    if(c.children && c.children.length) collapsed.add(c.id);
-    foldFrom(c);
-  });
-})(TREE);
+function foldFrom(r){
+  (function f(n){
+    (n.children||[]).forEach(c => {
+      if(c.children && c.children.length) collapsed.add(c.id);
+      f(c);
+    });
+  })(r);
+}
+/* династии-кланы сворачиваются наравне с ветвями рода: прародитель виден,
+   глубже — по кружку (раньше Кадас и Сар были раскрыты всегда целиком) */
+foldFrom(TREE); foldFrom(KADAS_TREE); foldFrom(SAR_TREE); foldFrom(VUM_TREE);
+[KADAS_TREE, SAR_TREE, VUM_TREE].forEach(r => { if(r.children && r.children.length) collapsed.add(r.id); });
 
 const pairRows = n => 1 + (n.spouse?1:0) + (n.prevSpouses ? n.prevSpouses.length : 0);
 const pairH = n => CH*pairRows(n) + PGAP*(pairRows(n)-1);
@@ -2178,12 +2381,12 @@ let curPos = new Map();
 /* заголовки кланов — создаются один раз, позиционируются в renderFrame */
 const clanTitles = new Map();
 function updateClanTitles(){
-  for(const [spId, root] of [['kadas',KADAS_TREE],['ofelia',SAR_TREE]]){
+  for(const [spId, root] of [['kadas',KADAS_TREE],['ofelia',SAR_TREE],['maryana',VUM_TREE]]){
     let el = clanTitles.get(spId);
     if(!el){
       el = document.createElement('div');
       el.className = 'glabel';
-      el.textContent = root.dname + ' · I поколение сетки';
+      el.textContent = root.dname + ' · ' + (ROMAN[root.gen || 0] || 'I') + ' поколение сетки';
       stage.appendChild(el);
       clanTitles.set(spId, el);
     }
@@ -2228,7 +2431,9 @@ for(const [id, info] of people){
 }
 
 for(const [id, info] of people){
-  if(info.isSpouse || !descCount(info.p)) continue;
+  /* у Стивена потомков в собственной ветке нет — его кружок ведёт к единственной
+     дочери (стоит в ветке Тарренса), поэтому разрешаем чип и без прямых детей */
+  if(info.isSpouse || (!descCount(info.p) && id !== 'steven')) continue;
   const chip = document.createElement('button');
   chip.className = 'chip pre';
   chip.dataset.for = id;
@@ -2456,10 +2661,13 @@ function renderFrame(){
     if(!u){ chip.style.display='none'; continue; }
     chip.style.display='';
     chip.style.transform = 'translate(' + (u.x+14) + 'px,' + (u.y-13) + 'px)';
-    const hid = collapsed.has(id);
-    chip.textContent = hid ? descCount(n) : '–';
+    const stv = id === 'steven';   /* дочь Стивена растёт в ветке Тарренса */
+    const hid = stv ? collapsed.has('tarrens') : collapsed.has(id);
+    const cnt = stv ? (KIN.kids.get(id)||[]).length : descCount(n);
+    chip.textContent = hid ? cnt : '–';
     chip.classList.toggle('open', !hid);
-    chip.title = hid ? 'Развернуть ветвь — потомков: ' + descCount(n) : 'Свернуть ветвь';
+    chip.title = hid ? (stv ? 'Показать дочь Стивена' : 'Развернуть ветвь — потомков: ' + cnt)
+                     : 'Свернуть ветвь';
   }
   updateSvg(curPos);
   let x2=0, y2=0;
@@ -2595,7 +2803,7 @@ function relayout(animate){
  $('#btnExpand').addEventListener('click', ()=>{
   if(collapsed.size === 0){
     collapsed.clear();
-    (function f(n){ (n.children||[]).forEach(c=>{ if(c.children&&c.children.length) collapsed.add(c.id); f(c); }); })(TREE);
+    foldFrom(TREE); foldFrom(KADAS_TREE); foldFrom(SAR_TREE); foldFrom(VUM_TREE);
   } else {
     collapsed.clear();
   }
@@ -2603,6 +2811,18 @@ function relayout(animate){
 });
 
 function toggleBranch(id){
+  if(id === 'steven'){
+    /* кружок Стивенса: развернуть путь к его дочери (в ветке Тарренса) и открыть
+       её карточку; повторный клик сворачивает ветку обратно */
+    if(collapsed.has('tarrens')){
+      collapsed.delete('tarrens'); collapsed.delete('williamjr');
+      goToPerson('stevd');
+    } else {
+      collapsed.add('tarrens');
+      relayout(true);
+    }
+    return;
+  }
   collapsed.has(id) ? collapsed.delete(id) : collapsed.add(id);
   relayout(true);
 }
@@ -2613,7 +2833,7 @@ let selected = null;
 
 function highlightSet(id){
   const info = people.get(id), set = new Set(), owner = info.owner;
-  const addSp = n => { if(n.spouse){ set.add(n.spouse.id); if(n.spouse.clan){ set.add(n.spouse.clan.id); down(n.spouse.clan); } } if(n.prevSpouses) n.prevSpouses.forEach(s=>set.add(s.id)); };
+  const addSp = n => { if(n.spouse){ set.add(n.spouse.id); if(n.spouse.clan){ set.add(n.spouse.clan.id); down(n.spouse.clan); if(n.spouse.clan.spouse) set.add(n.spouse.clan.spouse.id); } } if(n.prevSpouses) n.prevSpouses.forEach(s=>set.add(s.id)); };
   const down = n => { (n.children||[]).forEach(c=>{ set.add(c.id); addSp(c); down(c); }); };
   set.add(owner.id); addSp(owner);
   down(owner);
@@ -2630,6 +2850,10 @@ function highlightSet(id){
     set.add(par.id); addSp(par);
     cur = par;
   }
+  /* кровная связь через брак: дочь Стивена в ветке Тарренса и её родители
+     подсвечиваются вместе, как настоящая ветвь */
+  if(id === 'steven' || id === 'stevensw') set.add('stevd');
+  if(id === 'stevd'){ set.add('steven'); set.add('stevensw'); }
   return set;
 }
 
@@ -2713,8 +2937,9 @@ const KIN = { par:new Map(), kids:new Map(), marr:[], fem:new Map() };
   for(const e of ENGAGED) KIN.marr.push([e.a, e.b, 'eng']);
 })();
 
-/* мосты родства через брак: родители Маргарет Кадас и Офелии Сар —
-   так калькулятор родства видит деда по «маминой линии» */
+/* мосты родства через брак: родители Маргарет Кадас, Офелии Сар,
+   дочери Стивена и Марьяны Вум — так калькулятор родства видит бабку
+   по «маминой линии» (Рольна Вум — бабка Альфреда) */
 (function(){
   const bridge = (parents, child) => {
     if(!people.has(child)) return;
@@ -2729,6 +2954,7 @@ const KIN = { par:new Map(), kids:new Map(), marr:[], fem:new Map() };
   bridge(['petrk','francisk'], 'kadas');
   bridge(['andres','alexsandr'], 'ofelia');
   bridge(['steven','stevensw'], 'stevd');   /* «единственная дочь» Стивена — супруга Уильяма Тарренсида */
+  bridge(['vumh','rolna'], 'maryana');      /* Марьяна Вум — дочь купца Вума и Рольны */
 })();
 
 const KN = {
@@ -2932,6 +3158,11 @@ function openPanel(id){
       const csibs = (cpar.children||[]).filter(x=>x.id!==id);
       if(csibs.length) html += section('Братья и сёстры · ' + csibs.length,
         csibs.map(c => linkItem(c.id, c.name, c.years, colorOf(c.id))).join(''));
+    } else {
+      /* дом без собственной ветви внутри клана (Вумы): родители — через мост родства */
+      const cpars = (KIN.par.get(id)||[]).map(k=>people.get(k)).filter(Boolean);
+      if(cpars.length) html += section('Родители',
+        cpars.map(p => linkItem(p.p.id, p.p.name, p.p.years, colorOf(p.p.id))).join(''));
     }
   }
   /* механика отношений: ползунок −100…+100 с пояснениями очков */
@@ -2961,7 +3192,7 @@ function openPanel(id){
   if(notes.length){
     const label = id==='william' ? 'Летопись'
       : (rootOf.get(id) && rootOf.get(id) !== TREE) ? 'Летопись династии'
-      : (id==='kadas'||id==='ofelia') ? 'Династия'
+      : (id==='kadas'||id==='ofelia'||id==='maryana') ? 'Династия'
       : (id==='leonard') ? 'Справки Леонарда'
       : 'Из летописи';
     html += section(label, notes.map(t=>'<p class="p-note">'+t+'</p>').join(''));
@@ -3163,8 +3394,15 @@ $('.brand').addEventListener('click', ()=>{
   if(matchMedia('(max-width:760px)').matches) goToPerson('william');
 });
 
-/* кнопка легенды на телефоне */
-$('#legendToggle').addEventListener('click', ()=> $('#legend').classList.toggle('open'));
+/* легенда: телефон — круглая кнопка-переключатель; десктоп — сворачивание крестиком
+   и возврат пилюлей «Как читать древо» */
+const legendEl = $('#legend');
+$('#legendToggle').addEventListener('click', ()=>{ legendEl.classList.remove('off'); legendEl.classList.toggle('open'); });
+$('#legendHide').addEventListener('click', e=>{
+  e.stopPropagation();
+  legendEl.classList.remove('open');
+  if(matchMedia('(min-width:761px)').matches) legendEl.classList.add('off');
+});
 document.addEventListener('click', e=>{
   if(e.target.closest && !e.target.closest('#legend') && !e.target.closest('#legendToggle')) $('#legend').classList.remove('open');
 });
