@@ -66,7 +66,12 @@
   #viewport{position:fixed;inset:var(--hh) 0 0 0;overflow:hidden;cursor:grab;touch-action:none;background-image:radial-gradient(rgba(200,165,101,.05) 1px,transparent 1px);background-size:26px 26px}
   #viewport.grabbing{cursor:grabbing}
   /* полотно древа полностью не выделяется: ни карточки, ни фоновые подписи */
-  #stage{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform;
+  /* пан (translate) — отдельный композиторский слой #panner; масштаб — честный
+     CSS zoom на #stage: текст и линии раскладываются/растеризуются сразу в
+     конечном размере и остаются резкими на любом приближении
+     (прежний transform:scale оставлял «мыло» на сильном зуме) */
+  #panner{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+  #stage{position:absolute;left:0;top:0;
     user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none}
   #links{position:absolute;left:0;top:0;overflow:visible;shape-rendering:geometricPrecision}
 
@@ -108,13 +113,15 @@
   .stublabel{position:absolute;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--faint);white-space:nowrap;transition:opacity .35s}
   .late{animation:fin .7s .9s both}
 
-  .ln{fill:none;stroke-width:1.5;stroke-opacity:.5;stroke-linecap:round;transition:stroke-opacity .35s,stroke-width .35s;shape-rendering:geometricPrecision}
-  .ln.hl{stroke-opacity:1;stroke-width:2.5}
+  /* --ik = 1/zoom: при CSS zoom vector-effect:non-scaling-stroke не действует —
+     компенсируем толщину, линии остаются тонкими при любом масштабе */
+  .ln{fill:none;stroke-width:calc(1.5*var(--ik,1));stroke-opacity:.5;stroke-linecap:round;transition:stroke-opacity .35s,stroke-width .35s;shape-rendering:geometricPrecision}
+  .ln.hl{stroke-opacity:1;stroke-width:calc(2.5*var(--ik,1))}
   .ln.dimline{stroke-opacity:.07}
   .ln.stub{stroke-dasharray:4 5;stroke-opacity:.45}
   .ln.prev{stroke-dasharray:4 5;stroke-opacity:.4}
   /* нить династии: отец супруги из клана → её карточка (сплошная, цвет династии) */
-  .ln.clan{stroke-width:2;stroke-opacity:.85}
+  .ln.clan{stroke-width:calc(2*var(--ik,1));stroke-opacity:.85}
   .dia{transition:opacity .35s}
   .dimmed{opacity:.12}
 
@@ -193,10 +200,6 @@
   /* дуги помолвок */
   .ln.eng{stroke-dasharray:3 7;opacity:.8}
   .engring circle{fill:none;stroke:#c8a565;stroke-width:1.3;opacity:.9}
-  /* пересборка текста после зума: прозрачный outline инвалидирует отрисовку — Chromium
-     перерастеряет текст в актуальном масштабе (лечение «мыла» на сильном приближении) */
-  #stage.repaint .card, #stage.repaint .glabel, #stage.repaint .stublabel, #stage.repaint .chip, #stage.repaint .genlabel, #stage.repaint .genline{outline:1px solid transparent}
-
   @media (max-width:1150px){.top-stats{display:none}}
   @media (max-width:760px){
     :root{--hh:calc(52px + env(safe-area-inset-top,0px))}
@@ -979,7 +982,7 @@ body.reveal #hint{animation:fin 1.1s ease .65s both}
 </header>
 
 <main id="viewport">
-  <div id="stage"><svg id="links"></svg></div>
+  <div id="panner"><div id="stage"><svg id="links"></svg></div></div>
 </main>
 
 <aside id="legend">
@@ -1128,7 +1131,9 @@ const DEATHS = {
   vada:     'Пала в бою',
   petro:    'Неизвестно',
   vuala:    'Неизвестно',
-  margaretw:'Неизвестно'
+  margaretw:'Неизвестно',
+  ludving:  'Продолжительная венерическая болезнь',
+  zhefranb: 'Пал от тоски по Элеоноре'
 };
 
 /* топ достижений мирового масштаба — отдельная секция летописи основателя */
@@ -1323,7 +1328,7 @@ const TREE = {
                 note:'Одна из жён свободного Эйрика — взятая в плен в походе: резкая ненависть между ними сменилась пылкой и страстной любовью. Родила Гедрика.' },
               children:[
                 { id:'gedrik', name:'Гедрик Роббертс', years:'ок. 179 — н.в.', tag:'бастард',
-                  note:'Родила Мулья из Смуглых земель — жена, взятая в плен в одном из походов: резкая ненависть между ними сменилась пылкой и страстной любовью. Участвовал во множестве кампаний и чудом породнился с Вилмундом Гельсом — своим внучатым племянником и многократным врагом: тот выдал за Гедрика единственную дочь, чтобы окончательно переманить его на свою сторону.',
+                  note:'Его родила Мулья из Смуглых земель — жена, взятая Эйриком в плен в одном из походов: резкая ненависть между ними сменилась пылкой и страстной любовью. Участвовал во множестве кампаний и чудом породнился со своим многократным врагом Вилмундом Гельсом: тот выдал за Гедрика единственную дочь, чтобы окончательно переманить его на свою сторону.',
                   spouse:{ id:'wilmd', name:'Дочь Вилмунда Гельса', years:'—', sex:'f', sub:'супруга · богатый дом Гельсов',
                     note:'Единственная дочь Вилмунда Гельса, выданная за бывшего врага ради союза линий. Мать графа Гума.' },
                   children:[
@@ -1370,8 +1375,8 @@ const TREE = {
     { id:'buttler', name:'Баттлер Роббертс', years:'117 — 180', group:'sons',
       note:'Нажива стала главным стимулом: сбежал из дома малолетним и вступил в вартемберские наёмники — с тех пор постоянно воевал, хотя наёмничество особого статуса не давало. Потомство от проститутки надолго уронило его в глазах дома — ветвь реабилитировалась, лишь дав четверых детей; часть выгодных браков укрепила её статус внутри семьи. Пал иронично: случайно упал с коня, пока ехал домой после завершения наёмнической карьеры. Обоих сыновей, рождённых от женщин, быстро сбежавших с Баллтеровского гнёта, забрал себе — и оба продолжили его дело. В обще-родовом движении Идеи Сильнейшего Баттлериды оказались изгоями: они единственные из кровных Роббертсов осели в Яльве — земле, которую прочие линии презирают по заветам основателя, — хотя именно Роббертсы там правят.',
       children:[
-        { id:'morris', name:'Моррис Роббертс', years:'137 — н.в.', tag:'бастард',
-          note:'Старший. Вартемберский наёмник — до сих пор работает в вартемберских краях.' },
+        { id:'morris', name:'Моррис Роббертс', years:'ок. 135 — н.в.', tag:'бастард',
+          note:'Старший из двух: летописный 137-й не сходится с младшим Дёрти (ок. 136-го) — значит, рождён около 135-го. Вартемберский наёмник — до сих пор работает в вартемберских краях.' },
         { id:'dirty', name:'Дёрти Роббертс', years:'ок. 136 — 168', tag:'бастард',
           note:'Младший. Пал в сражениях с островитянскими войсками. С четырнадцати лет был женат на взрослой вартемберской леди — та родила четверых детей с разницей в год (Джейкоб 151, Эльза 152, Леонард 153, Гальяна 154 — потому годом рождения самого Дёрти в летописи значился ошибочный 148-й: отец не мог родить сыновей в 3 года).',
           spouse:{ id:'dirtyw', name:'Вартемберская леди', years:'—', sub:'супруга · старше мужа на годы',
@@ -1403,6 +1408,8 @@ const TREE = {
               ] },
             { id:'elsa', name:'Эльза Роббертс', years:'152 — н.в.', sex:'f',
               note:'Вышла за барона из рода Мерс; сын Альфрей — продолжение линии.',
+              spouse:{ id:'mersb', name:'Барон Мерс', years:'—', sub:'супруг · имя летопись не сохранила',
+                note:'Безымянный в летописи барон из рода Мерс: Эльза вышла за него, и сын Альфрей сохранил фамилию отца.' },
               children:[ { id:'alfrey', name:'Альфрей Мерс', years:'180 — н.в.',
                 tag:'прониар · регент Накрая · полководец Яльвы',
                 note:[
@@ -1442,6 +1449,8 @@ const TREE = {
       children:[
         { id:'edward', name:'Эдуард Гельс', years:'ок. 138 — н.в.', sex:'m',
           note:'Со временем стал главой богатого дома. Женился лишь в 181-м, в сорок три года.',
+          spouse:{ id:'edwardw', name:'Жена Эдуарда', years:'—', sex:'f', sub:'супруга · имя летопись не сохранила',
+            note:'Имя её летопись не сохранила: Эдуард женился лишь в 181-м, в сорок три года, а в 182-м родился сын Вилмунд — будущий глава дома Гельсов.' },
           children:[
             { id:'wildmund', name:'Вилмунд Гельс', years:'182 — н.в.', sex:'m',
               note:'Глава богатого дома Гельсов. Многократно враждовал с Гедриком Долидом — и в конце выдал за него свою единственную дочь, чтобы окончательно переманить на свою сторону. Внук Гум — граф в Вартемберии.' }
@@ -1450,26 +1459,32 @@ const TREE = {
 
     { id:'berta', name:'Берта Роббертс', years:'106 — 240-е', group:'daughters',
       note:'Деятель культуры самых разных направлений — остановилась на пении: с 174 года певица при дворе Фьордлинга. Первая в династии, кто родил двоих детей вместо одного. Прониклась Идеей Сильнейшего и самолично поженила своих правнуков — Виктора Ниссона и Ваду Жефрансуа (206), соединив обе ветви Бертидов. Активно выяснила, где все члены Роббертсов, и приютила увезённого из Альбиона Ерория. Пала в ходе интриг; потомки часто с ней связывались и очень её чтили.',
+      spouse:{ id:'ludving', name:'Людвинг Граймс', years:'? — 161', sub:'союз · бард · отец Элеоноры',
+        note:'Бродячий бард из обедневшей вартемберской династии: разошёлся с Бертой почти сразу после рождения дочери и пал в 161-м от продолжительной венерической болезни.' },
       children:[
         { id:'eleonora', name:'Элеонора Граймс', years:'122 — 153', tag:'бастард',
-          note:'Отец — бродячий бард Людвинг Граймс из обедневшей вартемберской династии: разошёлся с Бертой почти сразу и пал в 161-м от продолжительной венерической болезни. Элеонора вышла за барона, который её сильно любил.',
+          note:'Отец — бродячий бард Людвинг Граймс из обедневшей вартемберской династии: разошёлся с Бертой почти сразу и пал в 161-м от продолжительной венерической болезни. Элеонора родила сына барону, который её сильно любил, — Андрэ унаследовал его замок и титул.',
+          spouse:{ id:'zhefranb', name:'Барон Жефранус', years:'? — ок. 151', sub:'союз · отец Андрэ · замок Жефрануса',
+            note:'Безымянный в летописи барон, владелец Замка Жефрануса: Элеонора родила ему сына. Сам барон был бездетным и не женатым — пал от тоски по Элеоноре, и младенец Андрэ уже в 152-м унаследовал его замок и баронский титул.' },
           children:[
             { id:'andre', name:'Андрэ Жефранус', years:'151 — 168', sex:'m', tag:'бастард',
-              note:'Наследовал Замок Жефрануса от бездетного и неженатого отца-барона — тот пал от тоски по Элеоноре. Сам Андрэ прожил всего семнадцать лет, но успел родить сына.',
+              note:'В 152-м, ещё младенцем, унаследовал Замок Жефрануса от бездетного и неженатого отца-барона — тот пал от тоски по Элеоноре. Сам Андрэ прожил всего семнадцать лет, но успел родить сына.',
               children:[
                 { id:'elbert', name:'Эльберт Жефрансуа', years:'168 — н.в.', sex:'m',
-                  note:'Возглавил Замок Жефрануса. Его дочь Вада продолжила линию: бабка Берта самолично выдала её за Виктора Ниссона, соединив обе ветви Бертидов. Прабабушку очень чтит и постоянно с ней связывался.' }
+                  note:'Возглавил Замок Жефрануса. Жены так и не нашёл — до сих пор в поисках супруги для продолжения династии, поэтому дочь Вада родилась вне брака; бабка Берта самолично выдала её за Виктора Ниссона, соединив обе ветви Бертидов. Прабабушку очень чтит и постоянно с ней связывался.' }
               ]}
           ]},
-        { id:'bertn', name:'Берт Ниссон', years:'146 — 167', sex:'m', tag:'бастард',
+        { id:'bertn', name:'Берт Ниссон', years:'146 — 167', sex:'m', tag:'бастард', by:null,
           note:'Отец — островитянин Торн Ниссон, обманувший Берту: выдавал себя за Нирсона, представителя древней знати. Годы спустя Торн начал помогать сыну, заглаживая вину, — его с тех пор дела шли неважно. Берт прожил недолгую, но мудрую жизнь и простил обоих. Пал вместе с Торном в одном бою за страну Келиев в южных краях.',
           children:[
             { id:'arnold', name:'Арнольд Ниссон', years:'166 — 189', sex:'m', tag:'бастард',
               note:'Мать — островитянка, прибывшая с Торном, но не пожелавшая с ним остаться. Рос с бабушкой Бертой, стал придворным при Фьордлинге, дослужился до конюшенного. Пал на скачках. Успел зачать дитя и вступить в союз с Вероникой, служанкой двора Фьордлинга.',
+              spouse:{ id:'veronika', name:'Вероника', years:'—', sex:'f', sub:'союз · служанка двора Фьордлинга',
+                note:'Служанка при дворе Фьордлинга: Арнольд успел зачать с ней дитя и вступить в союз — Виктора она родила уже после гибели отца, в год его падения.' },
               children:[
                 { id:'victor', name:'Виктор Ниссон', years:'189 — 200-е', sex:'m',
                   note:'Рождён в год гибели Арнольда. В 206-м бабка Берта самолично поженила его с четвероюродной сестрой Вадой Жефрансуа — так соединились обе ветви Бертидов. Дочь Мишель — единый потомок Бертидов.',
-                  spouse:{ id:'vada', name:'Вада Жефрансуа', years:'? — 200-е', sub:'супруга · дочь Эльберта Жефрансуа',
+                  spouse:{ id:'vada', name:'Вада Жефрансуа', years:'? — 200-е', tag:'бастард', sub:'супруга · дочь Эльберта Жефрансуа',
                     note:'Дочь Эльберта, правнучка Берты; четвероюродная сестра и супруга Виктора Ниссона. Мать баронессы Мишель.' },
                   children:[
                     { id:'michel', name:'Мишель Викторовна Ниссон', years:'209 — н.в.', sex:'f', tag:'баронесса Жефрануса',
@@ -1808,9 +1823,17 @@ const REL = {
       [40,'Когда Артур пал, эльфы «не могли простить себе, что услышали его просьбы слишком поздно» — прощание шло неделями']
     ]]
   },
-  andre: {
+  /* +60 — это отношение БАРОНА ЖЕФРАНУСА к Элеоноре (пара раньше ошибочно висела
+     на её сыне Андрэ); самому Андрэ хроника отношения к матери не даёт */
+  zhefranb: {
     eleonora: [60, [
-      [60,'Барон «её сильно любил»: пал от тоски по Элеоноре — замок унаследовал их сын']
+      [60,'Сильно любил Элеонору — пал от тоски по ней; замок и титул унаследовал их сын Андрэ']
+    ]]
+  },
+  eleonora: {
+    zhefranb: [50, [
+      [35,'Родила барону единственного сына — продолжение его рода'],
+      [15,'Их сын Андрэ уже в 152-м унаследовал замок Жефрануса и баронский титул']
     ]]
   },
   elbert: {
@@ -2123,6 +2146,11 @@ function computeLayout(){
     unions.push({node:n});
     return yc;
   })(TREE, 0);
+  /* кровная нить Стивенсидов: в сетке у Стивена потомков нет — его единственная дочь
+     выдана за Уильяма Тарренсида и стоит в ветке Тарренса. Нить от ромба-союза
+     Стивена к её карточке (как «нить династии») делает родную связь видимой. */
+  if(pos.get('steven') && pos.get('stevd'))
+    links.push({from: people.get('steven').p, child: people.get('stevd').p, clan:true});
   return {pos, links, unions};
 }
 
@@ -2143,7 +2171,7 @@ function linkD(u, c){
 
 /* ═══════════ 4. DOM: карточки и кружки ═══════════ */
 
-const viewport=$('#viewport'), stage=$('#stage'), svgEl=$('#links');
+const viewport=$('#viewport'), stage=$('#stage'), svgEl=$('#links'), panner=$('#panner');
 const cardEls = new Map(), chipEls = new Map();
 let curPos = new Map();
 
@@ -2445,7 +2473,7 @@ function renderFrame(){
 /* ═══════════ 6. АНИМАЦИИ ВИДА ═══════════ */
 
 let rafId=0, viewRaf=0, view={x:0,y:0,k:1};
-const KMIN=.08, KMAX=2.6, LOGK=Math.log(KMAX/KMIN);
+const KMIN=.08, KMAX=3.2, LOGK=Math.log(KMAX/KMIN);
 var zSlider=null, zValEl=null, zSlideLock=false;
 
 /* полотно не теряется: всегда видна полоса древа шириной ~150px, но пан свободен */
@@ -2465,18 +2493,23 @@ function updateZoomUI(){
   zValEl.textContent = Math.round(view.k*100)+'%';
 }
 
-/* после зума Chromium может оставить растровую текстуру текста старого масштаба («мыло»):
-   через паузу инвалидируем отрисовку текстовых элементов — перерастеряются резко */
-let repaintT = null;
-function scheduleRepaint(){
-  if(repaintT) clearTimeout(repaintT);
-  repaintT = setTimeout(()=>{
-    repaintT = null;
-    stage.classList.add('repaint');
-    requestAnimationFrame(()=>requestAnimationFrame(()=>stage.classList.remove('repaint')));
-  }, 180);
-}
-const applyView = () => { clampView(); stage.style.transform = 'translate('+view.x+'px,'+view.y+'px) scale('+view.k+')'; updateStubs(); updateZoomUI(); scheduleRepaint(); };
+/* резкость на любом зуме: пан (translate) живёт на #panner — композиторском слое,
+   а масштабом управляет CSS zoom на #stage: текст и линии растеризуются сразу в
+   конечном размере, без «мыла» от transform:scale. --ik = 1/zoom держит линии
+   тонкими (zoom масштабирует stroke, в отличие от transform с non-scaling-stroke).
+   Fallback для браузеров без CSS zoom — прежняя схема transform:scale. */
+const ZOOMABLE = (function(){ try{ return CSS.supports('zoom','2'); }catch(_){ return false; } })();
+const applyView = () => {
+  clampView();
+  if(ZOOMABLE){
+    panner.style.transform = 'translate('+view.x+'px,'+view.y+'px)';
+    stage.style.zoom = view.k;
+    svgEl.style.setProperty('--ik', (1/view.k).toFixed(5));
+  } else {
+    panner.style.transform = 'translate('+view.x+'px,'+view.y+'px) scale('+view.k+')';
+  }
+  updateStubs(); updateZoomUI();
+};
 
 function tweenTo(target){
   cancelAnimationFrame(rafId);
@@ -2695,6 +2728,7 @@ const KIN = { par:new Map(), kids:new Map(), marr:[], fem:new Map() };
   };
   bridge(['petrk','francisk'], 'kadas');
   bridge(['andres','alexsandr'], 'ofelia');
+  bridge(['steven','stevensw'], 'stevd');   /* «единственная дочь» Стивена — супруга Уильяма Тарренсида */
 })();
 
 const KN = {
@@ -2728,12 +2762,20 @@ function kinNoun(dA, dB, fem, srcId, dstId){
   let b;
   if(m===1 && diff===0){
     b = kinPick(KN.sib, fem);
-    if(kinGroupOf(srcId)!=='adopted' && kinGroupOf(dstId)!=='adopted'){
+    if(kinGroupOf(dstId)==='adopted'){
+      b = kinJoin(['приёмный','приёмная','приёмного','приёмной'], b, fem?1:0, fem?3:2);
+    } else if(kinGroupOf(srcId)!=='adopted'){
       const pa = KIN.par.get(srcId)||[], pb = KIN.par.get(dstId)||[];
       const shared = pa.filter(x=>pb.includes(x));
       if(shared.length===1){
-        b = kinJoin(KIN.fem.get(shared[0]) ? ['единоутробный','единоутробная','единоутробного','единоутробной']
-                                          : ['единокровный','единокровная','единокровного','единокровной'], b, fem?1:0, fem?3:2);
+        /* «единокровный/единоутробный» — только когда матери заведомо разные
+           (у обоих разные «by»); при неизвестных матерях — просто брат/сестра */
+        const byOf = pid => { const i = people.get(pid); return (i && !i.isSpouse && ('by' in i.p)) ? i.p.by : undefined; };
+        const ba = byOf(srcId), bb = byOf(dstId);
+        if((ba||bb) && ba!==bb){
+          b = kinJoin(KIN.fem.get(shared[0]) ? ['единоутробный','единоутробная','единоутробного','единоутробной']
+                                            : ['единокровный','единокровная','единокровного','единокровной'], b, fem?1:0, fem?3:2);
+        }
       }
     }
   }
@@ -2850,9 +2892,17 @@ function openPanel(id){
   const marria = [];
   if(owner.spouse) marria.push(owner.spouse);
   if(owner.prevSpouses) marria.push(...owner.prevSpouses);
-  if(marria.length){
-    html += section(info.isSpouse ? 'Союз' : (marria.length>1 ? 'Браки · '+marria.length : 'Брак / союз'),
+  if(info.isSpouse){
+    /* союз супруги — это её пара с владельцем карточки, а не «союз с самой собой» */
+    html += section('Союз', linkItem(owner.id, owner.name, owner.years, colorOf(owner.id)));
+  } else if(marria.length){
+    html += section(marria.length>1 ? 'Браки · '+marria.length : 'Брак / союз',
       marria.map(s=>linkItem(s.id, s.name, s.years, colorOf(s.id))).join(''));
+  }
+  /* супруги без родового клана: родители — если родство заведено (мост) */
+  if(info.isSpouse && !n.clan){
+    const spars = (KIN.par.get(id)||[]).map(k=>people.get(k)).filter(Boolean);
+    if(spars.length) html += section('Родители', spars.map(p => linkItem(p.p.id, p.p.name, p.p.years, colorOf(p.p.id))).join(''));
   }
   if(!info.isSpouse && parentOf.has(id)){
     const par = parentOf.get(id);
@@ -2862,9 +2912,10 @@ function openPanel(id){
     if(by) inner += linkItem(by.p.id, by.p.name, by.p.years, colorOf(by.p.id));
     html += section('Родители', inner);
   }
-  if(owner.children && owner.children.length){
-    html += section('Дети · ' + owner.children.length,
-      owner.children.map(c => linkItem(c.id, c.name, c.years + (c.tag?' · '+c.tag:''), colorOf(c.id))).join(''));
+  const kidInfos = (KIN.kids.get(id)||[]).map(k=>{ const t = people.get(k); return t ? {id:k, p:t.p} : null; }).filter(Boolean);
+  if(kidInfos.length){
+    html += section('Дети · ' + kidInfos.length,
+      kidInfos.map(c => linkItem(c.id, c.p.name, c.p.years + (c.p.tag?' · '+c.p.tag:''), colorOf(c.id))).join(''));
   }
   const sibs = (!info.isSpouse && parentOf.has(id))
     ? parentOf.get(id).children.filter(x=>x.id!==id) : [];
