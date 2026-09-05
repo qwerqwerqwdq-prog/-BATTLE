@@ -1072,7 +1072,7 @@ body.reveal #hint{animation:fin 1.1s ease .65s both}
 }
 
 /* ═════════════════ F16: КАЛЬКУЛЯТОР РОДСТВА ═════════════════ */
-.kin-pickers{position:relative;z-index:1;display:flex;gap:12px;align-items:flex-start;justify-content:center;flex-wrap:wrap;padding:20px 14px 4px}
+.kin-pickers{position:relative;z-index:5;display:flex;gap:12px;align-items:flex-start;justify-content:center;flex-wrap:wrap;padding:20px 14px 4px}
 .kin-pick{width:min(300px,44vw)}
 .kin-lbl{display:block;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);margin:0 2px 6px}
 .kin-inbox{position:relative}
@@ -1081,8 +1081,16 @@ body.reveal #hint{animation:fin 1.1s ease .65s both}
 .kin-inbox input:focus{border-color:var(--accent)}
 .kin-inbox input::placeholder{color:var(--faint)}
 .kin-drop{position:absolute;top:44px;left:0;right:0;z-index:6;background:var(--card);border:1px solid var(--hair);border-radius:10px;
-  box-shadow:0 14px 34px rgba(0,0,0,.5);display:none;max-height:300px;overflow-y:auto}
+  box-shadow:0 14px 34px rgba(0,0,0,.5);display:none;max-height:min(300px,44vh);overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:rgba(201,186,125,.35) transparent}
 .kin-drop.open{display:block}
+.kin-drop::-webkit-scrollbar{width:8px}
+.kin-drop::-webkit-scrollbar-track{background:transparent}
+.kin-drop::-webkit-scrollbar-thumb{background:rgba(201,186,125,.3);border-radius:4px}
+.kin-drop::-webkit-scrollbar-thumb:hover{background:rgba(201,186,125,.5)}
+.kin-drop .s-item{gap:8px;padding-right:11px}
+.kin-drop .s-name{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.kin-drop .s-meta{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;text-align:right}
 .kin-sel{margin-top:7px;display:none;align-items:center;gap:8px;padding:6px 10px;border:1px solid rgba(200,165,101,.35);border-radius:9px;background:rgba(200,165,101,.07)}
 .kin-sel.has{display:flex}
 .kin-sel .ks-dot{width:7px;height:7px;flex:none;transform:rotate(45deg)}
@@ -1106,6 +1114,12 @@ body.reveal #hint{animation:fin 1.1s ease .65s both}
 .kin-how{margin-top:14px;font-size:10.5px;letter-spacing:.06em;color:var(--faint)}
 .kin-show{margin-top:14px}
 .kin-note-off{margin-top:12px;padding:10px 14px;border:1px dashed rgba(178,74,62,.5);border-radius:10px;color:#cf9284;font-size:12.5px}
+/* F17: золотая нить пути родства на полотне */
+#kinthread{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+#kinthread .kt-glow{fill:none;stroke:rgba(232,196,120,.16);stroke-width:10px;stroke-linecap:round}
+#kinthread .kt-core{fill:none;stroke:#eccf85;stroke-width:2.4px;stroke-linecap:round;filter:drop-shadow(0 0 5px rgba(236,207,133,.55))}
+#kinthread .kt-dash{stroke-dasharray:8px 8px}
+.kin-via{margin:9px 0 0;font-size:10.5px;letter-spacing:.06em;color:var(--muted)}
 @media (max-width:760px){
   .kin-pickers{flex-direction:column;align-items:stretch}
   .kin-pick{width:100%}
@@ -1249,11 +1263,13 @@ body.reveal #hint{animation:fin 1.1s ease .65s both}
 
 /* ═════════════════ F16: ПОЛОСА ПУТИ РОДСТВА НА ДРЕВЕ ═════════════════ */
 #kinBar{position:fixed;left:50%;bottom:calc(18px + var(--sab));transform:translateX(-50%) translateY(90px);z-index:96;
-  display:flex;gap:13px;align-items:center;padding:11px 15px;border:1px solid rgba(200,165,101,.55);border-radius:13px;
+  display:flex;gap:13px;align-items:center;justify-content:center;flex-wrap:wrap;row-gap:7px;
+  padding:11px 15px;border:1px solid rgba(200,165,101,.55);border-radius:13px;
   background:rgba(27,23,18,.97);box-shadow:0 16px 40px rgba(0,0,0,.55);opacity:0;pointer-events:none;
   transition:opacity .35s ease,transform .5s cubic-bezier(.22,.8,.3,1);max-width:94vw}
 #kinBar.show{opacity:1;transform:translateX(-50%);pointer-events:auto}
-#kinBar .kb-t{font-size:12px;color:var(--text);white-space:nowrap}
+#kinBar .kb-t{font-size:12px;color:var(--text);white-space:normal;text-align:center}
+@media (max-width:760px){ #kinBar{padding:9px 11px;gap:9px} #kinBar button{padding:0 9px} }
 #kinBar .kb-t b{color:var(--accent);font-weight:600}
 #kinBar button{height:30px;padding:0 12px;border:1px solid var(--hair);border-radius:8px;background:none;color:var(--muted);
   font-family:inherit;font-size:11.5px;cursor:pointer;transition:border-color .25s,color .25s;white-space:nowrap}
@@ -3103,6 +3119,7 @@ function renderFrame(){
   drawGroupLabels();
   drawGenGuides();
   updateClanTitles();
+  if(window.robreKinThreadTick) window.robreKinThreadTick();
 }
 
 /* ═══════════ 6. АНИМАЦИИ ВИДА ═══════════ */
@@ -5658,6 +5675,14 @@ function renderKin(){
       '<div class="kin-row"><span class="kin-name">' + esc(na.name) + '</span><span class="kin-sep">—</span><span class="kin-rel">' + esc(kin.aToB) + '</span></div></div>';
   }
   var path = kinFindPath(a, b);
+  if(kin && path && path.length > 2){
+    var via = [];
+    for(var vi=0; vi<path.length-1; vi++){
+      if(/супруг|наречён/.test(kinStepLabel(path[vi], path[vi+1])))
+        via.push(esc(people.get(path[vi]).p.name + ' ⇄ ' + people.get(path[vi+1]).p.name));
+    }
+    if(via.length) html += '<div class="kin-via">Брачные узлы нити: ' + via.join(' · ') + '</div>';
+  }
   if(!path){
     html += kin
       ? '<div class="kin-how">Родня через брачные союзы рода — прямой кровной нити летопись не знает.</div>'
@@ -5736,6 +5761,7 @@ function showKinPath(path){
   var target = computeLayout();
   reveal(target, true);
   window.robreKinPath = new Set(path);
+  window.robreKinPathArr = path.slice();
   applyHighlight();
   path.forEach(function(id){
     var el = cardEls.get(id);
@@ -5744,9 +5770,14 @@ function showKinPath(path){
   var x1=1e9, y1=1e9, x2=-1e9, y2=-1e9, ok=false;
   path.forEach(function(id){
     var p = target.pos.get(id);
-    if(p){ ok = true; x1=Math.min(x1,p.x); y1=Math.min(y1,p.y); x2=Math.max(x2,p.x+186); y2=Math.max(y2,p.y+64); }
+    if(p){ ok = true; x1=Math.min(x1,p.x); y1=Math.min(y1,p.y); x2=Math.max(x2,p.x+CW); y2=Math.max(y2,p.y+CH); }
   });
-  if(ok) centerOn({ x:(x1+x2)/2, y:(y1+y2)/2 });
+  /* F17: нить рисуется сразу, камера подгоняется под ВЕСЬ путь */
+  if(ok){
+    kinThreadAnim = true;
+    updateKinThread();
+    kinFitRect(x1, y1, x2, y2);
+  }
   var bar = q('#kinBar');
   q('#kinBarT').innerHTML = 'Путь родства: <b>' + (path.length-1) + '</b> ' +
     (path.length-1 === 1 ? 'связь' : path.length-1 < 5 ? 'связи' : 'связей') +
@@ -5754,6 +5785,100 @@ function showKinPath(path){
   if(bar) bar.classList.add('show');
   robreAch('kinpath');
 }
+/* ── F17: «золотая нить» пути родства + подгонка камеры под путь ── */
+var kinThread = null, kinThreadSig = null, kinEdgeEls = [], kinThreadAnim = false;
+function kinThreadSvg(){
+  if(kinThread) return kinThread;
+  kinThread = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  kinThread.id = 'kinthread';
+  stage.appendChild(kinThread);
+  return kinThread;
+}
+function kinEdgeD(pa, pb){
+  var acx = pa.x + CW/2, bcx = pb.x + CW/2, acy = pa.y + HALF, bcy = pb.y + HALF;
+  var dx = bcx - acx, dy = bcy - acy, d;
+  if(Math.abs(dx) >= Math.abs(dy)){
+    var sx = dx >= 0 ? pa.x + CW : pa.x, ex = dx >= 0 ? pb.x : pb.x + CW;
+    var m1 = sx + (ex - sx) * .42, m2 = sx + (ex - sx) * .58;
+    d = 'M' + sx + ' ' + acy + ' C' + m1 + ' ' + acy + ' ' + m2 + ' ' + bcy + ' ' + ex + ' ' + bcy;
+  } else {
+    var sy = dy >= 0 ? pa.y + CH : pa.y, ey = dy >= 0 ? pb.y : pb.y + CH;
+    var n1 = sy + (ey - sy) * .42, n2 = sy + (ey - sy) * .58;
+    d = 'M' + acx + ' ' + sy + ' C' + acx + ' ' + n1 + ' ' + bcx + ' ' + n2 + ' ' + bcx + ' ' + ey;
+  }
+  return d;
+}
+function updateKinThread(){
+  var arr = window.robreKinPathArr;
+  if(!arr || arr.length < 2 || !window.robreKinPath){
+    if(kinThread && kinThread.childNodes.length){ kinThread.innerHTML = ''; }
+    kinThreadSig = null; kinEdgeEls = [];
+    return;
+  }
+  var svg = kinThreadSvg(), NS = 'http://www.w3.org/2000/svg';
+  var sig = arr.join('>');
+  if(sig !== kinThreadSig){
+    kinThreadSig = sig; kinEdgeEls = [];
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    for(var i = 0; i < arr.length - 1; i++){
+      var marr = /супруг|наречён/.test(kinStepLabel(arr[i], arr[i+1]));
+      var g = document.createElementNS(NS, 'path');
+      g.setAttribute('class', 'kt-glow');
+      g.setAttribute('vector-effect', 'non-scaling-stroke');
+      var c = document.createElementNS(NS, 'path');
+      c.setAttribute('class', 'kt-core' + (marr ? ' kt-dash' : ''));
+      c.setAttribute('vector-effect', 'non-scaling-stroke');
+      if(kinThreadAnim && !marr){
+        c.setAttribute('pathLength', '1');
+        c.style.strokeDasharray = '1'; c.style.strokeDashoffset = '1';
+      } else if(kinThreadAnim && marr){
+        g.style.opacity = '0'; c.style.opacity = '0';
+      }
+      svg.appendChild(g); svg.appendChild(c);
+      kinEdgeEls.push([g, c, marr]);
+    }
+  }
+  var okc = true;
+  for(var i = 0; i < arr.length; i++) if(!curPos.get(arr[i])){ okc = false; break; }
+  if(!okc){ svg.style.display = 'none'; return; }
+  svg.style.display = '';
+  for(var i = 0; i < arr.length - 1; i++){
+    var d = kinEdgeD(curPos.get(arr[i]), curPos.get(arr[i+1]));
+    kinEdgeEls[i][0].setAttribute('d', d);
+    kinEdgeEls[i][1].setAttribute('d', d);
+  }
+  var anim = kinThreadAnim; kinThreadAnim = false;
+  if(anim){
+    void svg.getBoundingClientRect();
+    for(var i = 0; i < kinEdgeEls.length; i++)(function(i){
+      var g = kinEdgeEls[i][0], c = kinEdgeEls[i][1];
+      setTimeout(function(){
+        if(kinEdgeEls[i][2]){
+          g.style.transition = 'opacity .5s ease'; c.style.transition = 'opacity .5s ease';
+          g.style.opacity = '1'; c.style.opacity = '1';
+        } else {
+          c.style.transition = 'stroke-dashoffset .55s ease ' + (i * .12) + 's';
+          c.style.strokeDashoffset = '0';
+          setTimeout(function(){
+            c.style.transition = ''; c.style.strokeDasharray = '';
+            c.style.strokeDashoffset = ''; c.removeAttribute('pathLength');
+          }, 750 + i * 120);
+        }
+      }, 40);
+    })(i);
+  }
+}
+function kinFitRect(x1, y1, x2, y2){
+  var vp = viewport.getBoundingClientRect();
+  var w = Math.max(x2 - x1, 120) + CW, h = Math.max(y2 - y1, 80) + CH;
+  var k = view.k;
+  if(w * k > vp.width - 150 || h * k > vp.height - 210)
+    k = clamp(Math.min((vp.width - 150) / w, (vp.height - 210) / h), KMIN, Math.min(1.15, KMAX));
+  else k = clamp(k, KMIN, Math.min(1.15, KMAX));
+  var cx = (x1 + x2 + CW) / 2, cy = (y1 + y2 + HALF) / 2;
+  tweenView({ k: k, x: vp.width / 2 - cx * k, y: vp.height / 2 - cy * k }, 680);
+}
+window.robreKinThreadTick = updateKinThread;
 window.robreClearKinPath = function(){
   if(window.robreKinPath){
     window.robreKinPath = null;
@@ -5762,6 +5887,8 @@ window.robreClearKinPath = function(){
   }
   var bar = q('#kinBar');
   if(bar) bar.classList.remove('show');
+  window.robreKinPathArr = null;
+  if(window.robreKinThreadTick) window.robreKinThreadTick();
 };
 function bindKin(){
   var btn = q('#btnKin'), dlg = q('#kin');
