@@ -1031,6 +1031,234 @@ body.reveal #hint{animation:fin 1.1s ease .65s both}
   .ta-text{font-size:14px;line-height:1.5}
   .ta-lead{font-size:8.5px;letter-spacing:.2em;gap:8px}
 }
+/* ═════════════════ F16: КНОПКИ-ИНСТРУМЕНТЫ ШАПКИ ═════════════════ */
+/* компактные иконки-кнопки: подписи спрятаны всегда — смысл несут title и диалоги */
+.tool-btn{width:36px;padding:0;display:grid;place-items:center}
+.tool-btn .bt-ico{display:block}
+.tool-btn .bt-label{display:none}
+#btnMore{display:none}
+#moreMenu{position:fixed;top:calc(var(--hh) + 6px);right:calc(10px + var(--sar));z-index:75;background:var(--card);
+  border:1px solid var(--hair);border-radius:12px;box-shadow:0 16px 38px rgba(0,0,0,.55);display:none;min-width:210px;overflow:hidden}
+#moreMenu.open{display:block}
+.mm-row{display:flex;align-items:center;gap:11px;width:100%;padding:11px 14px;background:none;border:none;border-bottom:1px solid rgba(255,255,255,.05);
+  color:var(--text);font-family:inherit;font-size:13px;cursor:pointer;text-align:left}
+.mm-row:last-child{border-bottom:none}
+.mm-row svg{flex:none;stroke:var(--accent)}
+@media (max-width:1000px){
+  .tool-btn{display:none}
+  #btnMore{display:grid}
+}
+/* шесть новых инструментов расширили шапку: статистика и «Летопись основателя»
+   остаются на широких экранах, «Развернуть всё» до 1650px — иконкой */
+@media (max-width:1500px){ .top-stats{display:none} #btnFounder{display:none} }
+@media (max-width:1650px){ #btnExpand .bt-label{display:none} #btnExpand .bt-ico{display:block} }
+@media (max-width:560px){ .brand-title{display:none} }
+
+/* ═════════════════ F16: ОБЩИЙ КАРКАС ДИАЛОГОВ ═════════════════ */
+.f16-dlg{position:fixed;inset:0;z-index:121;display:none;flex-direction:column;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, rgba(200,165,101,.10), transparent 60%),
+    radial-gradient(900px 600px at 50% 115%, rgba(200,165,101,.07), transparent 60%),
+    linear-gradient(180deg,#0e0c08,#14110c 40%,#0d0b08);
+  animation:libIn .45s ease both}
+.f16-dlg.open{display:flex}
+.f16-dlg::before{content:'';position:absolute;width:110vmax;height:110vmax;border-radius:50%;pointer-events:none;z-index:0;
+  right:-36vmax;top:-44vmax;background:radial-gradient(closest-side,rgba(200,165,101,.06),transparent 70%);animation:taFog 27s ease-in-out infinite alternate}
+.f16-dlg .lib-head,.f16-dlg .lib-close{z-index:2}
+@media (max-width:760px){
+  .f16-dlg .lib-head{padding-top:calc(18px + env(safe-area-inset-top,0px))}
+  .f16-dlg .lib-head h2{font-size:clamp(18px,5.4vw,25px);letter-spacing:.14em;text-indent:.14em}
+  .f16-dlg .lh-s{font-size:8.5px;letter-spacing:.18em}
+}
+
+/* ═════════════════ F16: КАЛЬКУЛЯТОР РОДСТВА ═════════════════ */
+.kin-pickers{position:relative;z-index:1;display:flex;gap:12px;align-items:flex-start;justify-content:center;flex-wrap:wrap;padding:20px 14px 4px}
+.kin-pick{width:min(300px,44vw)}
+.kin-lbl{display:block;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);margin:0 2px 6px}
+.kin-inbox{position:relative}
+.kin-inbox input{width:100%;height:38px;padding:0 12px;background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:9px;
+  color:var(--text);font-family:inherit;font-size:13px;outline:none;transition:border-color .25s}
+.kin-inbox input:focus{border-color:var(--accent)}
+.kin-inbox input::placeholder{color:var(--faint)}
+.kin-drop{position:absolute;top:44px;left:0;right:0;z-index:6;background:var(--card);border:1px solid var(--hair);border-radius:10px;
+  box-shadow:0 14px 34px rgba(0,0,0,.5);display:none;max-height:300px;overflow-y:auto}
+.kin-drop.open{display:block}
+.kin-sel{margin-top:7px;display:none;align-items:center;gap:8px;padding:6px 10px;border:1px solid rgba(200,165,101,.35);border-radius:9px;background:rgba(200,165,101,.07)}
+.kin-sel.has{display:flex}
+.kin-sel .ks-dot{width:7px;height:7px;flex:none;transform:rotate(45deg)}
+.kin-sel .ks-name{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kin-swap{flex:none;width:38px;height:38px;margin-top:23px;border:1px solid var(--hair);border-radius:9px;background:rgba(255,255,255,.03);
+  color:var(--accent);font-size:17px;cursor:pointer;transition:border-color .25s,transform .35s cubic-bezier(.22,.8,.3,1)}
+@media (hover:hover){ .kin-swap:hover{border-color:var(--accent);transform:rotate(180deg)} }
+.kin-res{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:14px 14px 8px}
+.kin-verdict{margin:0 0 4px}
+.kin-empty{padding:34px 16px;text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:var(--faint)}
+.kin-chain{display:flex;flex-direction:column;margin-top:16px}
+.kin-chip{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:min(430px,88%);padding:10px 15px;cursor:pointer;text-align:left;
+  background:linear-gradient(180deg,rgba(255,255,255,.02),transparent),var(--card);border:1px solid #3d372c;border-left:3px solid var(--bc,#55503f);border-radius:7px;
+  transition:border-color .25s,background .25s}
+@media (hover:hover){ .kin-chip:hover{border-color:var(--bc,#55503f);background:var(--card2)} }
+.kc-name{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:17px;color:var(--text)}
+.kc-sub{font-size:10px;letter-spacing:.05em;color:var(--muted)}
+.kin-step{display:flex;align-items:center;gap:10px;padding:5px 0 5px 20px}
+.ks-arr{color:var(--accent);font-size:12px;line-height:1}
+.ks-lbl{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:1px solid rgba(200,165,101,.28);border-radius:99px;padding:3px 10px;background:rgba(200,165,101,.05)}
+.kin-how{margin-top:14px;font-size:10.5px;letter-spacing:.06em;color:var(--faint)}
+.kin-show{margin-top:14px}
+.kin-note-off{margin-top:12px;padding:10px 14px;border:1px dashed rgba(178,74,62,.5);border-radius:10px;color:#cf9284;font-size:12.5px}
+@media (max-width:760px){
+  .kin-pickers{flex-direction:column;align-items:stretch}
+  .kin-pick{width:100%}
+  .kin-swap{margin:2px auto 0;transform:rotate(90deg)}
+  .kin-chip{width:100%}
+}
+
+/* ═════════════════ F16: ПАНЕЛЬ ФИЛЬТРОВ ═════════════════ */
+#fpanel{position:fixed;top:calc(var(--hh) + 10px);right:calc(12px + var(--sar));width:308px;max-height:min(72vh,640px);overflow-y:auto;z-index:70;
+  background:var(--card);border:1px solid var(--hair);border-radius:13px;box-shadow:0 18px 42px rgba(0,0,0,.55);padding:15px 15px 13px;display:none;scrollbar-width:thin}
+#fpanel.open{display:block;animation:fin .25s ease both}
+.ft-h{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin:11px 0 7px}
+.ft-h:first-child{margin-top:0}
+.ft-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ft-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--hair);background:rgba(255,255,255,.02);border-radius:99px;
+  color:var(--muted);font-family:inherit;font-size:11.5px;padding:5px 11px;cursor:pointer;transition:border-color .25s,color .25s,background .25s}
+.ft-chip .fdot{width:7px;height:7px;flex:none;transform:rotate(45deg)}
+.ft-chip .n{font-size:9px;color:var(--faint)}
+.ft-chip.on{border-color:var(--accent);color:var(--accent);background:rgba(200,165,101,.1)}
+.ft-chip.on .n{color:rgba(200,165,101,.7)}
+.ft-clear{margin-top:13px;width:100%;height:32px;border:1px solid var(--hair);border-radius:8px;background:none;color:var(--muted);
+  font-family:inherit;font-size:11.5px;cursor:pointer;transition:border-color .25s,color .25s}
+@media (hover:hover){ .ft-clear:hover{border-color:var(--accent);color:var(--text)} }
+@media (max-width:760px){
+  #fpanel{left:10px;right:10px;width:auto;top:calc(var(--hh) + 6px)}
+}
+
+/* ═════════════════ F16: ТАЙМЛАЙН ПОКОЛЕНИЙ ═════════════════ */
+.tl-wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:8px 12px 18px}
+.tl-scroll{overflow:auto;border:1px solid var(--hair);border-radius:13px;background:rgba(255,255,255,.014);scrollbar-width:thin;max-height:calc(100vh - 210px)}
+.tl-scroll::-webkit-scrollbar{height:9px;width:9px}
+.tl-scroll::-webkit-scrollbar-thumb{background:#3d372c;border-radius:5px}
+.tl-in{position:relative;width:1180px;padding:6px 0 12px}
+.tl-strip{position:relative;height:52px;margin-left:206px;border-bottom:1px solid var(--hair)}
+.tl-tick{position:absolute;top:2px;font-size:8.5px;letter-spacing:.08em;color:var(--faint);transform:translateX(-50%);font-variant-numeric:tabular-nums}
+.tl-tick::after{content:'';position:absolute;left:50%;top:13px;bottom:-8px;border-left:1px dashed rgba(255,255,255,.06)}
+.tl-band{position:absolute;top:24px;bottom:-8px;background:rgba(178,74,62,.09);border-left:1px dashed rgba(178,74,62,.4);border-right:1px dashed rgba(178,74,62,.4)}
+.tl-band i{position:absolute;left:4px;top:2px;writing-mode:vertical-rl;font-style:normal;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(207,146,132,.85);white-space:nowrap}
+.tl-mark{position:absolute;top:24px;font-size:9px;color:#c97e6a;transform:translateX(-50%)}
+.tl-mark i{position:absolute;left:8px;top:-2px;writing-mode:vertical-rl;font-style:normal;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(207,146,132,.85);white-space:nowrap}
+.tl-now{position:absolute;top:16px;bottom:-8px;border-left:1px solid rgba(200,165,101,.55)}
+.tl-now i{position:absolute;left:5px;top:0;font-style:normal;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);white-space:nowrap}
+.tl-rows{position:relative;margin-left:0}
+.tl-row{position:relative;height:25px}
+.tl-row:hover{background:rgba(200,165,101,.045)}
+.tl-name{position:absolute;left:0;width:192px;top:4px;text-align:right;font-size:10.5px;color:var(--muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-bar{position:absolute;height:13px;top:6px;border-radius:7px;cursor:pointer;opacity:.92;transition:opacity .25s,box-shadow .25s}
+@media (hover:hover){ .tl-bar:hover{opacity:1;box-shadow:0 0 12px rgba(200,165,101,.35)} }
+.tl-bar.ghost{opacity:.55}
+.tl-die{position:absolute;top:4px;font-size:10px;color:var(--faint);transform:translateX(-50%);line-height:1}
+.tl-note{margin:12px auto 0;text-align:center;font-size:10.5px;letter-spacing:.1em;color:var(--faint);max-width:92vw}
+
+/* ═════════════════ F16: ХРОНИКА СОБЫТИЙ ═════════════════ */
+.ch-wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:14px 14px 8px}
+.ch-era{display:flex;align-items:center;gap:14px;margin:24px 0 12px}
+.ch-era:first-child{margin-top:2px}
+.ch-era-t{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);white-space:nowrap}
+.ch-era::after{content:'';height:1px;flex:1;background:linear-gradient(90deg,rgba(200,165,101,.4),transparent)}
+.ch-item{display:flex;gap:16px;padding:13px 16px;border:1px solid rgba(255,255,255,.06);border-radius:13px;margin-bottom:10px;
+  background:linear-gradient(160deg,rgba(255,255,255,.025),rgba(255,255,255,.005));transition:border-color .3s,transform .35s cubic-bezier(.22,.8,.3,1)}
+@media (hover:hover){ .ch-item:hover{border-color:rgba(200,165,101,.38);transform:translateY(-2px)} }
+.ch-y{flex:none;width:92px;text-align:right;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:17px;line-height:1.25;color:var(--accent)}
+.ch-b{min-width:0;flex:1}
+.ch-b h4{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:16.5px;color:#f0e2bd}
+.ch-b p{font-size:12.5px;line-height:1.55;color:var(--muted);margin-top:4px}
+.ch-go{display:inline-flex;align-items:center;gap:6px;margin-top:8px;border:1px solid var(--hair);border-radius:8px;background:none;
+  color:var(--muted);font-family:inherit;font-size:11px;padding:5px 10px;cursor:pointer;transition:border-color .25s,color .25s}
+@media (hover:hover){ .ch-go:hover{border-color:var(--accent);color:var(--text)} }
+@media (max-width:640px){
+  .ch-item{flex-direction:column;gap:4px}
+  .ch-y{width:auto;text-align:left}
+}
+
+/* ═════════════════ F16: ГЛОССАРИЙ ═════════════════ */
+.gl-searchbar{position:relative;z-index:1;display:flex;justify-content:center;padding:16px 14px 0}
+.gl-search{display:flex;align-items:center;gap:8px;width:min(520px,88vw);height:38px;padding:0 13px;background:rgba(255,255,255,.04);
+  border:1px solid var(--hair);border-radius:10px;transition:border-color .25s}
+.gl-search:focus-within{border-color:var(--accent)}
+.gl-search svg{flex:none;stroke:var(--faint)}
+.gl-search input{flex:1;min-width:0;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:13px}
+.gl-search input::placeholder{color:var(--faint)}
+.gl-lead{position:relative;z-index:1;margin:12px auto 0;max-width:900px;padding:0 16px;font-size:10.5px;letter-spacing:.1em;color:var(--faint);text-align:center}
+.gl-list{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:10px 14px 10px;columns:2;column-gap:26px}
+.gl-item{break-inside:avoid;padding:13px 4px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
+.gl-term{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:19px;color:#f0e2bd}
+.gl-tag{display:inline-block;vertical-align:2px;margin-left:9px;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);border:1px solid var(--hair);border-radius:99px;padding:2px 8px}
+.gl-def{font-size:12.5px;line-height:1.55;color:var(--muted);margin-top:6px}
+@media (max-width:760px){ .gl-list{columns:1} }
+
+/* всплывающая подсказка термина — поверх всех диалогов */
+.gterm{border-bottom:1px dashed rgba(200,165,101,.6);cursor:help;transition:color .2s,background .2s}
+@media (hover:hover){ .gterm:hover{color:var(--accent);background:rgba(200,165,101,.08)} }
+#gtip{position:fixed;z-index:140;max-width:320px;background:#221c13;border:1px solid rgba(200,165,101,.55);border-radius:11px;
+  padding:11px 14px 12px;box-shadow:0 16px 36px rgba(0,0,0,.55);display:none}
+#gtip.show{display:block;animation:fin .18s ease both}
+#gtip::after{content:'';position:absolute;inset:4px;border:1px solid rgba(200,165,101,.14);border-radius:8px;pointer-events:none}
+.gt-t{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:16px;color:var(--accent)}
+.gt-d{font-size:12px;line-height:1.5;color:var(--text);margin-top:5px}
+.gt-go{margin-top:9px;border:1px solid var(--hair);border-radius:7px;background:none;color:var(--muted);font-family:inherit;font-size:11px;padding:4px 9px;cursor:pointer}
+@media (hover:hover){ .gt-go:hover{border-color:var(--accent);color:var(--text)} }
+
+/* ═════════════════ F16: ДОСТИЖЕНИЯ ГОСТЯ ═════════════════ */
+.ac-prog{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:12px;margin:10px auto 0;
+  font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);animation:taIn .7s ease both}
+.ac-prog b{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:15px;letter-spacing:.1em;color:var(--accent)}
+.ac-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;max-width:1000px;margin:0 auto;padding:18px 14px 8px}
+.ac-card{display:flex;gap:14px;align-items:flex-start;padding:16px 17px;border:1px solid rgba(255,255,255,.07);border-radius:14px;
+  background:linear-gradient(160deg,rgba(255,255,255,.028),rgba(255,255,255,.006));transition:transform .4s cubic-bezier(.22,.8,.3,1),border-color .35s}
+@media (hover:hover){ .ac-card:hover{transform:translateY(-3px);border-color:rgba(200,165,101,.42)} }
+.ac-card.on{border-color:rgba(200,165,101,.4);box-shadow:0 10px 26px rgba(0,0,0,.3),0 0 24px rgba(200,165,101,.08)}
+.ac-medal{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:18px;
+  font-family:'Cormorant Garamond',serif;transition:transform .4s cubic-bezier(.22,.8,.3,1)}
+@media (hover:hover){ .ac-card:hover .ac-medal{transform:scale(1.08) rotate(-3deg)} }
+.ac-card.on .ac-medal{color:#14110c;background:linear-gradient(140deg,#f2dda6,#c8a565 58%,#a07d3c);
+  box-shadow:0 6px 16px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.5),0 0 20px rgba(200,165,101,.28)}
+.ac-card.off{opacity:.62}
+.ac-card.off .ac-medal{border:1px dashed rgba(200,165,101,.4);color:rgba(200,165,101,.45)}
+.ac-body{min-width:0}
+.ac-name{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:17.5px;line-height:1.2;color:#f0e2bd}
+.ac-card.off .ac-name{color:var(--muted)}
+.ac-desc{font-size:11.5px;line-height:1.45;color:var(--muted);margin-top:4px}
+.ac-date{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-top:7px;opacity:.85}
+.ac-reset{position:relative;z-index:1;display:block;margin:10px auto 20px;border:1px solid var(--hair);border-radius:8px;background:none;
+  color:var(--faint);font-family:inherit;font-size:11px;padding:7px 16px;cursor:pointer;transition:border-color .25s,color .25s}
+@media (hover:hover){ .ac-reset:hover{border-color:#c97e6a;color:#cf9284} }
+@media (max-width:760px){ .ac-grid{grid-template-columns:1fr;padding:14px 12px 4px} }
+
+/* тост открытия достижения */
+#achToast{position:fixed;left:50%;bottom:calc(26px + var(--sab));transform:translate(-50%,26px);z-index:210;display:flex;gap:13px;align-items:center;
+  padding:13px 19px 13px 14px;border:1px solid rgba(200,165,101,.6);border-radius:14px;background:rgba(27,23,18,.97);
+  box-shadow:0 18px 44px rgba(0,0,0,.6),0 0 30px rgba(200,165,101,.14);opacity:0;pointer-events:none;
+  transition:opacity .45s ease,transform .55s cubic-bezier(.22,.8,.3,1)}
+#achToast.show{opacity:1;transform:translate(-50%,0)}
+.at-medal{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:17px;color:#14110c;
+  background:linear-gradient(140deg,#f2dda6,#c8a565 58%,#a07d3c);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 18px rgba(200,165,101,.4);animation:taStar 2.6s ease-in-out infinite}
+.at-t{font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--faint)}
+.at-n{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:17px;color:#f0e2bd;margin-top:2px}
+
+/* ═════════════════ F16: ПОЛОСА ПУТИ РОДСТВА НА ДРЕВЕ ═════════════════ */
+#kinBar{position:fixed;left:50%;bottom:calc(18px + var(--sab));transform:translateX(-50%) translateY(90px);z-index:96;
+  display:flex;gap:13px;align-items:center;padding:11px 15px;border:1px solid rgba(200,165,101,.55);border-radius:13px;
+  background:rgba(27,23,18,.97);box-shadow:0 16px 40px rgba(0,0,0,.55);opacity:0;pointer-events:none;
+  transition:opacity .35s ease,transform .5s cubic-bezier(.22,.8,.3,1);max-width:94vw}
+#kinBar.show{opacity:1;transform:translateX(-50%);pointer-events:auto}
+#kinBar .kb-t{font-size:12px;color:var(--text);white-space:nowrap}
+#kinBar .kb-t b{color:var(--accent);font-weight:600}
+#kinBar button{height:30px;padding:0 12px;border:1px solid var(--hair);border-radius:8px;background:none;color:var(--muted);
+  font-family:inherit;font-size:11.5px;cursor:pointer;transition:border-color .25s,color .25s;white-space:nowrap}
+@media (hover:hover){ #kinBar button:hover{border-color:var(--accent);color:var(--text)} }
+.node.pathe .card{border-color:#c8a565;box-shadow:0 0 0 1px rgba(200,165,101,.75),0 0 20px rgba(200,165,101,.32)}
 /*__TOP_CSS_END__*/
 /*__LIB_CSS_END__*/
 </style>
@@ -1057,6 +1285,13 @@ body.reveal #hint{animation:fin 1.1s ease .65s both}
     <button class="ghost-btn" id="btnExpand" title="Развернуть всё"><svg class="bt-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 3H3v6M15 3h6v6M9 21H3v-6M15 21h6v-6"/></svg><span class="bt-label">Развернуть всё</span></button>
     <button class="ghost-btn" id="btnFounder">Летопись основателя</button>
     <button class="ghost-btn" id="btnTop" title="Топ достижений"><svg class="bt-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v6a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a2 2 0 0 0 2 5M17 6h3a2 2 0 0 1-2 5"/></svg><span class="bt-label">Топ достижений</span></button>
+        <button class="ghost-btn tool-btn" id="btnKin" title="Кто кому родня — калькулятор родства" aria-label="Калькулятор родства"><svg class="bt-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="6" r="3.2"/><circle cx="18" cy="18" r="3.2"/><path d="M8.2 8.2l7.6 7.6"/></svg><span class="bt-label">Кто кому родня</span></button>
+    <button class="ghost-btn tool-btn" id="btnFilters" title="Линии и дома — подсветка ветвей" aria-label="Фильтры линий"><svg class="bt-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18l-7 8v5l-4 2v-7z"/></svg><span class="bt-label">Линии и дома</span></button>
+    <button class="ghost-btn tool-btn" id="btnTline" title="Таймлайн поколений — шкала лет" aria-label="Таймлайн"><svg class="bt-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h18"/><circle cx="7" cy="12" r="2"/><circle cx="13.5" cy="12" r="2"/><circle cx="19.5" cy="12" r="1.5"/><path d="M7 6v2M13.5 16v2"/></svg><span class="bt-label">Таймлайн</span></button>
+    <button class="ghost-btn tool-btn" id="btnChron" title="Хроника событий — лента эпох" aria-label="Хроника событий"><svg class="bt-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span class="bt-label">Хроника</span></button>
+    <button class="ghost-btn tool-btn" id="btnGloss" title="Глоссарий — словарь мира рода" aria-label="Глоссарий"><svg class="bt-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.8-1.4-4.4-2-8-2v14c3.6 0 6.2.6 8 2 1.8-1.4 4.4-2 8-2V4c-3.6 0-6.2.6-8 2z"/><path d="M12 6v14"/></svg><span class="bt-label">Глоссарий</span></button>
+    <button class="ghost-btn tool-btn" id="btnAch" title="Достижения гостя — ачивки за изучение сайта" aria-label="Достижения гостя"><svg class="bt-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.5 5.2 5.7.7-4.2 4 1.1 5.6-5.1-2.8-5.1 2.8 1.1-5.6-4.2-4 5.7-.7z"/></svg><span class="bt-label">Достижения гостя</span></button>
+    <button class="ghost-btn" id="btnMore" title="Ещё инструменты" aria-label="Ещё инструменты"><svg class="bt-ico" width="15" height="15" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></g></svg><span class="bt-label">Ещё</span></button>
     <button class="ghost-btn" id="btnLibrary" title="Библиотека"><svg class="bt-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span class="bt-label">Библиотека</span></button>
   </div>
 </header>
@@ -1097,6 +1332,116 @@ body.reveal #hint{animation:fin 1.1s ease .65s both}
 <aside id="panel"></aside>
 
 
+<!-- ═══════════ F16: КАЛЬКУЛЯТОР РОДСТВА ═══════════ -->
+<div id="kin" class="f16-dlg" role="dialog" aria-label="Калькулятор родства">
+  <div class="lib-head">
+    <div class="lh-t">
+      <h2>Кто кому родня</h2>
+      <div class="lh-s">Калькулятор родства · нити рода через поколения</div>
+      <div class="lh-rule">❦</div>
+    </div>
+    <button class="lib-close" id="kinClose" aria-label="Закрыть">✕</button>
+  </div>
+  <div class="kin-pickers">
+    <div class="kin-pick">
+      <label class="kin-lbl" for="kinA">Первая родня</label>
+      <div class="kin-inbox"><input id="kinA" type="text" placeholder="Выбрать Роббертса…" autocomplete="off"><div class="kin-drop" id="kinDropA"></div></div>
+      <div class="kin-sel" id="kinSelA"><span class="ks-dot"></span><span class="ks-name"></span></div>
+    </div>
+    <button class="kin-swap" id="kinSwap" title="Поменять местами" aria-label="Поменять местами">⇄</button>
+    <div class="kin-pick">
+      <label class="kin-lbl" for="kinB">Вторая родня</label>
+      <div class="kin-inbox"><input id="kinB" type="text" placeholder="Выбрать Роббертса…" autocomplete="off"><div class="kin-drop" id="kinDropB"></div></div>
+      <div class="kin-sel" id="kinSelB"><span class="ks-dot"></span><span class="ks-name"></span></div>
+    </div>
+  </div>
+  <div class="lib-shelf-wrap"><div class="kin-res" id="kinRes"></div>
+    <div class="lib-note">Клик по имени — карточка в древе · «Показать путь» — подсветить цепочку родства на древе</div>
+  </div>
+</div>
+
+<!-- ═══════════ F16: ТАЙМЛАЙН ПОКОЛЕНИЙ ═══════════ -->
+<div id="tline" class="f16-dlg" role="dialog" aria-label="Таймлайн поколений">
+  <div class="lib-head">
+    <div class="lh-t">
+      <h2>Таймлайн рода</h2>
+      <div class="lh-s">Шкала лет · рождения и смерти · эпохи фоном</div>
+      <div class="lh-rule">❦</div>
+    </div>
+    <button class="lib-close" id="tlClose" aria-label="Закрыть">✕</button>
+  </div>
+  <div class="lib-shelf-wrap"><div class="tl-wrap" id="tlWrap"></div>
+    <div class="lib-note">Клик по полосе — карточка в древе · пунктир слева полосы — годы неизвестны летописи · полосы и метки эпох показаны приблизительно (ок.)</div>
+  </div>
+</div>
+
+<!-- ═══════════ F16: ХРОНИКА СОБЫТИЙ ═══════════ -->
+<div id="chron" class="f16-dlg" role="dialog" aria-label="Хроника событий">
+  <div class="lib-head">
+    <div class="lh-t">
+      <h2>Хроника эпох</h2>
+      <div class="lh-s">События мира рода · войны, браки и основания — не привязаны к одному человеку</div>
+      <div class="lh-rule">❦</div>
+    </div>
+    <button class="lib-close" id="chronClose" aria-label="Закрыть">✕</button>
+  </div>
+  <div class="lib-shelf-wrap"><div class="ch-wrap" id="chronRows"></div>
+    <div class="lib-note">Клик «карточка» — открыть героя события в древе · годы даются по новому календарю, с «ок.» — приблизительно</div>
+  </div>
+</div>
+
+<!-- ═══════════ F16: ГЛОССАРИЙ ═══════════ -->
+<div id="gloss" class="f16-dlg" role="dialog" aria-label="Глоссарий">
+  <div class="lib-head">
+    <div class="lh-t">
+      <h2>Глоссарий</h2>
+      <div class="lh-s">Словарь мира рода · дома, титулы, земли и магия</div>
+      <div class="lh-rule">❦</div>
+    </div>
+    <button class="lib-close" id="glossClose" aria-label="Закрыть">✕</button>
+  </div>
+  <div class="gl-searchbar"><div class="gl-search">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    <input id="glSearch" type="text" placeholder="Найти термин…" autocomplete="off">
+  </div></div>
+  <div class="gl-lead">Эти же термины подчёркнуты пунктиром в летописях — наведи, и словарь раскроет их без перехода</div>
+  <div class="lib-shelf-wrap"><div class="gl-list" id="glRows"></div></div>
+</div>
+
+<!-- ═══════════ F16: ДОСТИЖЕНИЯ ГОСТЯ ═══════════ -->
+<div id="ach" class="f16-dlg" role="dialog" aria-label="Достижения гостя">
+  <div class="lib-head">
+    <div class="lh-t">
+      <h2>Достижения гостя</h2>
+      <div class="lh-s">Ачивки за изучение древа, летописей и книг дома</div>
+      <div class="lh-rule">❦</div>
+    </div>
+    <button class="lib-close" id="achClose" aria-label="Закрыть">✕</button>
+  </div>
+  <div class="ac-prog" id="acProg"></div>
+  <div class="lib-shelf-wrap">
+    <div class="ac-grid" id="acGrid"></div>
+    <button class="ac-reset" id="acReset">Начать летопись гостя заново</button>
+  </div>
+</div>
+
+<!-- ═══════════ F16: ПАНЕЛЬ ФИЛЬТРОВ + МЕНЮ + СЛУЖЕБНЫЕ СЛОИ ═══════════ -->
+<aside id="fpanel" aria-label="Фильтры линий и домов"></aside>
+
+<div id="moreMenu" role="menu" aria-label="Ещё инструменты">
+  <button class="mm-row" data-act="kin" role="menuitem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="6" r="3.2"/><circle cx="18" cy="18" r="3.2"/><path d="M8.2 8.2l7.6 7.6"/></svg>Кто кому родня</button>
+  <button class="mm-row" data-act="filters" role="menuitem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18l-7 8v5l-4 2v-7z"/></svg>Линии и дома</button>
+  <button class="mm-row" data-act="tline" role="menuitem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h18"/><circle cx="7" cy="12" r="2"/><circle cx="13.5" cy="12" r="2"/></svg>Таймлайн</button>
+  <button class="mm-row" data-act="chron" role="menuitem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>Хроника эпох</button>
+  <button class="mm-row" data-act="gloss" role="menuitem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 6c-1.8-1.4-4.4-2-8-2v14c3.6 0 6.2.6 8 2 1.8-1.4 4.4-2 8-2V4c-3.6 0-6.2.6-8 2z"/></svg>Глоссарий</button>
+  <button class="mm-row" data-act="ach" role="menuitem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.5 5.2 5.7.7-4.2 4 1.1 5.6-5.1-2.8-5.1 2.8 1.1-5.6-4.2-4 5.7-.7z"/></svg>Достижения гостя</button>
+</div>
+
+<div id="kinBar"><span class="kb-t" id="kinBarT"></span><button id="kinBarClear">Снять путь</button><button id="kinBarOpen">Открыть калькулятор</button></div>
+
+<div id="gtip" role="tooltip" aria-hidden="true"></div>
+
+<div id="achToast" aria-live="polite"><div class="at-medal">✦</div><div><div class="at-t">Достижение открыто</div><div class="at-n" id="achToastN"></div></div></div>
 <div id="lib" role="dialog" aria-label="Библиотека дома">
   <div class="lib-head">
     <div class="lh-t">
@@ -2940,7 +3285,19 @@ function highlightSet(id){
 }
 
 function applyHighlight(){
-  const set = selected ? highlightSet(selected) : null;
+  let set = selected ? highlightSet(selected) : null;
+  /* F16: путь родства (калькулятор) сужает подсветку до цепочки */
+  const kp = window.robreKinPath;
+  if(kp && kp.size){
+    if(set){ const f = new Set([...set].filter(id => kp.has(id))); if(selected) f.add(selected); set = f; }
+    else set = new Set(kp);
+  }
+  /* F16: фильтры линий и домов */
+  const fs = window.robreFilter;
+  if(fs && fs.size){
+    if(set){ const f = new Set([...set].filter(id => fs.has(id))); if(selected) f.add(selected); set = f; }
+    else set = new Set(fs);
+  }
   for(const [id,el] of cardEls){
     el.classList.toggle('sel', id===selected);
     el.classList.toggle('dim', !!set && !set.has(id));
@@ -3299,7 +3656,7 @@ function openPanel(id){
   $('#pLocate').addEventListener('click', ()=> goToPerson(id));
 }
 
-function select(id){ if(selected && selected!==id) prevSelected = selected; selected = id; applyHighlight(); openPanel(id); }
+function select(id){ if(window.robreClearKinPath) window.robreClearKinPath(); if(selected && selected!==id) prevSelected = selected; selected = id; applyHighlight(); openPanel(id); try{ robreAch('card', id); }catch(e){} }
 function deselect(){
   if(!selected && !$('#panel').classList.contains('open')) return;
   selected = null; applyHighlight();
@@ -3557,6 +3914,7 @@ const INDEX = [...people.values()].map(info => ({
 function goSearch(id){
   drop.classList.remove('open');
   searchInput.value=''; searchInput.blur();
+  try{ robreAch('search', id); }catch(e){}
   goToPerson(id);
 }
 let sActive = -1;
@@ -3568,7 +3926,10 @@ searchInput.addEventListener('input', ()=>{
   const q = searchInput.value.trim().toLowerCase();
   sActive = -1;
   if(q.length<2){ drop.classList.remove('open'); return; }
-  const res = INDEX.filter(p=>p.name.toLowerCase().includes(q));
+  const rf = window.robreSearchF || {};
+  const res = INDEX.filter(p=>p.name.toLowerCase().includes(q)
+    && (!rf.alive || /н\.в\./.test(p.meta))
+    && (!rf.founders || (window.robreIsFounder && robreIsFounder(p.id))));
   /* лучшие совпадения выше: имя начинается с запроса, затем совпадение с начала слова */
   res.sort((a,b)=>{
     const an=a.name.toLowerCase(), bn=b.name.toLowerCase();
@@ -4646,6 +5007,7 @@ function showLeaf(startFlipped){
 }
 function doFlip(dir){
   if(busy || !curBook || !flow) return;
+  var __pl = (k > 0) ? (leafLabel(k) || '') : 'Обложка';   /* F16: подпись раздела до листа */
   closeMenu();
   if(dir > 0 && k >= maxK()) return;
   if(dir < 0 && k <= 0) return;
@@ -4688,6 +5050,7 @@ function doFlip(dir){
   refreshUI();
   pendingTimer = setTimeout(function(){
     k = nk;
+    try{ document.dispatchEvent(new CustomEvent('rd:flip', {detail:{from:__pl, to:(nk>0)?(leafLabel(nk)||''):'Обложка', fwd:dir>0}})); }catch(e){}
     elLeaf.classList.add('noanim');
     elLeaf.classList.toggle('flipped', dir > 0);
     void elLeaf.offsetWidth;
@@ -4904,6 +5267,1011 @@ else init();
 })();
 
 //__LIB_JS_END</script>
+<script>
+/*__F16_JS__ F16: калькулятор родства · фильтры · таймлайн · хроника · глоссарий · достижения гостя*/
+/* ═══════════════════════════════════════════════════════════════════
+   F16 · ШЕСТЬ НОВЫХ ИНСТРУМЕНТОВ РОДА
+   1. Достижения гостя  2. Фильтры линий и домов  3. Калькулятор родства
+   4. Таймлайн поколений  5. Хроника эпох  6. Глоссарий с подсказками
+   Использует глобали основного скрипта: people, KIN, GROUPS, colorOf,
+   INDEX, goToPerson, computeLayout, reveal, centerOn, applyHighlight,
+   collapsed, parentOf, rootOf, rootIdx, MAIN, TREE, kinBetween,
+   kinConnected, KADAS_TREE, SAR_TREE, VUM_TREE.
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+'use strict';
+var q = function(s){ return document.querySelector(s); };
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ═══════════ 1. ДОСТИЖЕНИЯ ГОСТЯ ═══════════ */
+
+var ACH_KEY = 'robre_ach_v1';
+var ACH_DEFS = [
+  { id:'first',   ic:'✦', name:'Первый шаг в летописи', desc:'Открыть первую карточку персонажа в древе' },
+  { id:'founder', ic:'✦', name:'У истоков',             desc:'Открыть карточку родоначальника — смутного Робберта' },
+  { id:'ten',     ic:'❖', name:'Десять имён',           desc:'Открыть карточки десяти разных персонажей' },
+  { id:'lines',   ic:'❖', name:'Семь линий',            desc:'Познакомиться со всеми семью линиями рода' },
+  { id:'search',  ic:'◈', name:'Искатель',              desc:'Найти персонажа через поиск' },
+  { id:'filter',  ic:'◈', name:'Следопыт',              desc:'Подсветить линию или дом фильтром' },
+  { id:'kin',     ic:'✵', name:'Нить родства',          desc:'Построить родство двух Роббертсов в калькуляторе' },
+  { id:'kinpath', ic:'✵', name:'След на древе',         desc:'Показать цепочку родства прямо на древе' },
+  { id:'library', ic:'❦', name:'Библиотекарь',          desc:'Заглянуть в библиотеку дома' },
+  { id:'reader',  ic:'❦', name:'Прочитал главу',        desc:'Долистать до новой главы в читалке' },
+  { id:'timeline',ic:'◆', name:'Летописец времён',      desc:'Открыть таймлайн поколений' },
+  { id:'chron',   ic:'◆', name:'Хронист',               desc:'Открыть хронику событий' },
+  { id:'gloss',   ic:'✧', name:'Знаток слов',           desc:'Заглянуть в глоссарий' },
+  { id:'terms',   ic:'✧', name:'Любознательный',        desc:'Раскрыть пять терминов в подсказках летописей' }
+];
+
+var achState = { done:{}, cards:[], lines:[], terms:[], nSearch:0 };
+function achLoad(){
+  try{
+    var raw = localStorage.getItem(ACH_KEY);
+    if(raw){
+      var d = JSON.parse(raw);
+      if(d && typeof d === 'object'){
+        achState.done  = d.done  || {};
+        achState.cards = d.cards || [];
+        achState.lines = d.lines || [];
+        achState.terms = d.terms || [];
+        achState.nSearch = d.nSearch || 0;
+      }
+    }
+  }catch(e){}
+}
+function achSave(){
+  try{ localStorage.setItem(ACH_KEY, JSON.stringify(achState)); }catch(e){}
+}
+achLoad();
+
+var achToastQ = [], achToastBusy = false;
+function achToastNext(){
+  var t = q('#achToast'); if(!t) return;
+  if(!achToastQ.length){ achToastBusy = false; return; }
+  achToastBusy = true;
+  var def = achToastQ.shift();
+  q('#achToastN').textContent = def.name;
+  t.classList.add('show');
+  setTimeout(function(){
+    t.classList.remove('show');
+    setTimeout(achToastNext, 550);
+  }, 4200);
+}
+function achUnlock(id){
+  if(achState.done[id]) return;
+  var def = null;
+  for(var i=0;i<ACH_DEFS.length;i++) if(ACH_DEFS[i].id===id){ def = ACH_DEFS[i]; break; }
+  if(!def) return;
+  achState.done[id] = Date.now();
+  achSave();
+  achToastQ.push(def);
+  if(!achToastBusy) achToastNext();
+  if(q('#ach').classList.contains('open')) renderAch();
+}
+
+/* семь линий: root, sons, daughters, adopted, kadas, sar, vum */
+function achLineKey(id){
+  if(id === 'kadas' || rootOf.get(id) === KADAS_TREE) return 'kadas';
+  if(id === 'ofelia' || rootOf.get(id) === SAR_TREE)  return 'sar';
+  if(id === 'maryana' || rootOf.get(id) === VUM_TREE) return 'vum';
+  var info = people.get(id);
+  if(!info || info.isSpouse) return null;
+  return info.p.group || null;
+}
+window.robreAch = function(ev, payload){
+  try{
+    if(ev === 'card'){
+      var id = payload;
+      if(!id || achState.cards.indexOf(id) < 0){
+        achState.cards.push(id);
+        achSave();
+        achUnlock('first');
+        if(id === 'robbert') achUnlock('founder');
+        if(achState.cards.length >= 10) achUnlock('ten');
+        var lk = achLineKey(id);
+        if(lk && achState.lines.indexOf(lk) < 0){
+          achState.lines.push(lk);
+          achSave();
+          if(achState.lines.length >= 7) achUnlock('lines');
+        }
+      }
+    }
+    else if(ev === 'search'){ achState.nSearch++; achSave(); if(achState.nSearch >= 1) achUnlock('search'); }
+    else if(ev === 'filter'){ achUnlock('filter'); }
+    else if(ev === 'kin'){ achUnlock('kin'); }
+    else if(ev === 'kinpath'){ achUnlock('kinpath'); achUnlock('kin'); }
+    else if(ev === 'library'){ achUnlock('library'); }
+    else if(ev === 'chapter'){ achUnlock('reader'); }
+    else if(ev === 'timeline'){ achUnlock('timeline'); }
+    else if(ev === 'chron'){ achUnlock('chron'); }
+    else if(ev === 'gloss'){ achUnlock('gloss'); }
+    else if(ev === 'term'){
+      if(achState.terms.indexOf(payload) < 0){
+        achState.terms.push(payload); achSave();
+        if(achState.terms.length >= 5) achUnlock('terms');
+      }
+    }
+  }catch(e){}
+};
+
+function achDateStr(ts){
+  try{
+    var d = new Date(ts);
+    return 'Открыто ' + d.getDate() + '.' + (d.getMonth()+1 < 10 ? '0' : '') + (d.getMonth()+1) + '.' + d.getFullYear();
+  }catch(e){ return 'Открыто'; }
+}
+function renderAch(){
+  var grid = q('#acGrid'), prog = q('#acProg');
+  if(!grid) return;
+  var n = 0;
+  for(var k in achState.done) if(achState.done[k]) n++;
+  prog.innerHTML = '<span>Летопись гостя</span><i>✦</i><span>открыто</span><b>' + n + '</b><span>из ' + ACH_DEFS.length + '</span>';
+  grid.innerHTML = ACH_DEFS.map(function(d){
+    var ts = achState.done[d.id];
+    return '<div class="ac-card ' + (ts ? 'on' : 'off') + '">' +
+      '<div class="ac-medal">' + d.ic + '</div>' +
+      '<div class="ac-body"><div class="ac-name">' + esc(d.name) + '</div>' +
+      '<div class="ac-desc">' + esc(d.desc) + '</div>' +
+      (ts ? '<div class="ac-date">' + achDateStr(ts) + '</div>' : '') +
+      '</div></div>';
+  }).join('');
+}
+var acResetArmed = false;
+function bindAch(){
+  var btn = q('#btnAch'), dlg = q('#ach');
+  if(!btn || !dlg || dlg.dataset.f16) return;
+  dlg.dataset.f16 = '1';
+  btn.addEventListener('click', function(){ openDlg('ach'); });
+  q('#achClose').addEventListener('click', function(){ closeDlg('ach'); });
+  dlg.addEventListener('click', function(e){ if(e.target === dlg) closeDlg('ach'); });
+  q('#acReset').addEventListener('click', function(){
+    if(!acResetArmed){
+      acResetArmed = true;
+      this.textContent = 'Точно стереть? Нажмите ещё раз';
+      var self = this;
+      setTimeout(function(){ acResetArmed = false; self.textContent = 'Начать летопись гостя заново'; }, 3500);
+      return;
+    }
+    acResetArmed = false;
+    achState = { done:{}, cards:[], lines:[], terms:[], nSearch:0 };
+    try{ localStorage.removeItem(ACH_KEY); }catch(e){}
+    renderAch();
+    this.textContent = 'Начать летопись гостя заново';
+  });
+}
+
+/* ═══════════ 2. ФИЛЬТРЫ ЛИНИЙ И ДОМОВ ═══════════ */
+
+function collectClan(root){
+  var s = new Set();
+  s.add(root.id);
+  if(root.spouse) s.add(root.spouse.id);
+  (function w(n){
+    s.add(n.id);
+    if(n.spouse) s.add(n.spouse.id);
+    if(n.prevSpouses) n.prevSpouses.forEach(function(x){ s.add(x.id); });
+    (n.children||[]).forEach(w);
+  })(root);
+  return s;
+}
+function collectBranchSet(headId){
+  var s = new Set();
+  var head = people.get(headId);
+  if(!head) return s;
+  (function w(n){
+    s.add(n.id);
+    if(n.spouse){ s.add(n.spouse.id); if(n.spouse.clan){ var cs = collectClan(n.spouse.clan); cs.forEach(function(x){ s.add(x); }); } }
+    if(n.prevSpouses) n.prevSpouses.forEach(function(x){ s.add(x.id); });
+    (n.children||[]).forEach(w);
+  })(head.p);
+  return s;
+}
+var FT_SECS = null;
+function buildFilterSets(){
+  if(FT_SECS) return FT_SECS;
+  FT_SECS = { groups:[], houses:[], branches:[] };
+  var gDefs = [
+    ['root','Основатели',null],['sons','Сыновья',null],['daughters','Дочери',null],
+    ['adopted','Приёмные',null],['__sp','Супруги',null]
+  ];
+  gDefs.forEach(function(g){
+    var s = new Set();
+    for(const [id,info] of people){
+      if(g[0]==='__sp'){ if(info.isSpouse) s.add(id); }
+      else if(!info.isSpouse && info.p.group===g[0]) s.add(id);
+    }
+    if(s.size) FT_SECS.groups.push({ key:'g:'+g[0], label:g[1], set:s });
+  });
+  [['kadas','Дом Кадас','kadas'],['sar','Дом Сар','ofelia'],['vum','Дом Вум','maryana']].forEach(function(h){
+    var s = collectClan(h[0]==='kadas'?KADAS_TREE:h[0]==='sar'?SAR_TREE:VUM_TREE);
+    s.add(h[2]);
+    FT_SECS.houses.push({ key:'h:'+h[0], label:h[1], set:s });
+  });
+  MAIN.children.forEach(function(c){
+    var s = collectBranchSet(c.id);
+    if(s.size) FT_SECS.branches.push({ key:'b:'+c.id, label:c.name.split(' ')[0], full:c.name, set:s });
+  });
+  return FT_SECS;
+}
+var fActive = new Set();      /* ключи структурных фильтров */
+window.robreFilter = null;
+window.robreSearchF = { alive:false, founders:false };
+/* «основатели линий»: родоначальник, основатель династии, главы ветвей (дети MAIN) и прародители домов */
+var BRANCH_HEADS = new Set(MAIN.children.map(function(c){ return c.id; }));
+window.robreIsFounder = function(id){
+  return id===TREE.id || id==='william' || BRANCH_HEADS.has(id) ||
+         id===KADAS_TREE.id || id===SAR_TREE.id || id===VUM_TREE.id;
+};
+function rebuildFilter(){
+  var u = null;
+  buildFilterSets();
+  ['groups','houses','branches'].forEach(function(sec){
+    FT_SECS[sec].forEach(function(ch){
+      if(fActive.has(ch.key)){
+        if(!u) u = new Set();
+        ch.set.forEach(function(x){ u.add(x); });
+      }
+    });
+  });
+  window.robreFilter = u;
+  applyHighlight();
+}
+function renderFpanel(){
+  var el = q('#fpanel');
+  if(!el || el.dataset.built) return;
+  el.dataset.built = '1';
+  var S = buildFilterSets();
+  var DOTC = { 'g:root':'#c8a565', 'g:sons':'#c8a565', 'g:daughters':'#c68363', 'g:adopted':'#8a93a6',
+               'g:__sp':'#4a4336', 'h:kadas':'#7f9779', 'h:sar':'#8b7fa8', 'h:vum':'#5c8a85' };
+  function chip(c){
+    return '<button class="ft-chip" data-fkey="' + c.key + '" title="' + esc(c.full || c.label) + '">' +
+      '<span class="fdot" style="background:' + (DOTC[c.key] || '#55503f') + '"></span>' +
+      esc(c.label) + ' <span class="n">' + c.set.size + '</span></button>';
+  }
+  var html = '<div class="ft-h">Линии рода</div><div class="ft-chips">' + S.groups.map(chip).join('') + '</div>';
+  html += '<div class="ft-h">Дома</div><div class="ft-chips">' + S.houses.map(chip).join('') + '</div>';
+  html += '<div class="ft-h">Ветви рода</div><div class="ft-chips">' + S.branches.map(chip).join('') + '</div>';
+  html += '<div class="ft-h">Поиск</div><div class="ft-chips">' +
+    '<button class="ft-chip" data-skey="alive">Только живые</button>' +
+    '<button class="ft-chip" data-skey="founders">Основатели линий</button></div>';
+  html += '<button class="ft-clear" id="ftClear">Снять все фильтры</button>';
+  el.innerHTML = html;
+  el.addEventListener('click', function(e){
+    var c = e.target.closest('[data-fkey]');
+    if(c){
+      var k = c.dataset.fkey;
+      if(fActive.has(k)){ fActive.delete(k); c.classList.remove('on'); }
+      else { fActive.add(k); c.classList.add('on'); robreAch('filter'); }
+      rebuildFilter();
+      return;
+    }
+    var sc = e.target.closest('[data-skey]');
+    if(sc){
+      var sk = sc.dataset.skey;
+      window.robreSearchF[sk] = !window.robreSearchF[sk];
+      sc.classList.toggle('on', window.robreSearchF[sk]);
+      return;
+    }
+    if(e.target.closest('#ftClear')) clearFilters();
+  });
+}
+function syncFpanel(){
+  var el = q('#fpanel'); if(!el) return;
+  el.querySelectorAll('[data-fkey]').forEach(function(c){
+    c.classList.toggle('on', fActive.has(c.dataset.fkey));
+  });
+  el.querySelectorAll('[data-skey]').forEach(function(c){
+    c.classList.toggle('on', !!window.robreSearchF[c.dataset.skey]);
+  });
+}
+function clearFilters(){
+  fActive.clear();
+  window.robreFilter = null;
+  window.robreSearchF = { alive:false, founders:false };
+  syncFpanel();
+  applyHighlight();
+}
+function bindFilters(){
+  var btn = q('#btnFilters'), el = q('#fpanel');
+  if(!btn || !el || btn.dataset.f16) return;
+  btn.dataset.f16 = '1';
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    renderFpanel();
+    el.classList.toggle('open');
+  });
+  document.addEventListener('click', function(e){
+    if(el.classList.contains('open') && !e.target.closest('#fpanel') && !e.target.closest('#btnFilters') && !e.target.closest('#moreMenu'))
+      el.classList.remove('open');
+  });
+}
+
+/* ═══════════ 3. КАЛЬКУЛЯТОР РОДСТВА ═══════════ */
+
+var KINSEL = { a:'robbert', b:'alfred' };
+
+function kinFindPath(a, b){
+  if(a === b) return [a];
+  var prev = new Map([[a, null]]), qq = [a];
+  var nbr = function(x){
+    return [].concat(KIN.par.get(x)||[], KIN.kids.get(x)||[],
+      KIN.marr.filter(function(p){ return p[0]===x; }).map(function(p){ return p[1]; }),
+      KIN.marr.filter(function(p){ return p[1]===x; }).map(function(p){ return p[0]; }));
+  };
+  while(qq.length){
+    var x = qq.shift(), nb = nbr(x);
+    for(var i=0;i<nb.length;i++){
+      var y = nb[i];
+      if(prev.has(y)) continue;
+      prev.set(y, x);
+      if(y === b){
+        var path = [b], c = b;
+        while(c !== a){ c = prev.get(c); path.push(c); }
+        return path.reverse();
+      }
+      qq.push(y);
+    }
+  }
+  return null;
+}
+function kinStepLabel(x, y){
+  var eng = KIN.marr.find(function(p){ return p[2]==='eng' && ((p[0]===x&&p[1]===y)||(p[0]===y&&p[1]===x)); });
+  var marr = KIN.marr.some(function(p){ return (p[0]===x&&p[1]===y)||(p[0]===y&&p[1]===x); });
+  if(marr || eng) return eng ? (KIN.fem.get(y) ? 'наречённая' : 'наречённый') : (KIN.fem.get(y) ? 'супруга' : 'супруг');
+  if((KIN.par.get(x)||[]).indexOf(y) >= 0) return KIN.fem.get(y) ? 'мать' : 'отец';
+  if((KIN.kids.get(x)||[]).indexOf(y) >= 0) return KIN.fem.get(y) ? 'дочь' : 'сын';
+  return 'родня';
+}
+function kinChip(id){
+  var info = people.get(id); if(!info) return '';
+  var n = info.p;
+  return '<button class="kin-chip" data-goto="' + id + '" style="--bc:' + colorOf(id) + '">' +
+    '<span class="kc-name">' + esc(n.name) + '</span>' +
+    '<span class="kc-sub">' + esc(n.years + (n.tag ? ' · ' + n.tag : '')) + '</span></button>';
+}
+function renderKin(){
+  var res = q('#kinRes'); if(!res) return;
+  var a = KINSEL.a, b = KINSEL.b;
+  [ ['a','#kinSelA'], ['b','#kinSelB'] ].forEach(function(pr){
+    var el = q(pr[1]), info = people.get(KINSEL[pr[0]]);
+    if(!el) return;
+    if(info){
+      el.classList.add('has');
+      el.querySelector('.ks-dot').style.background = colorOf(KINSEL[pr[0]]);
+      el.querySelector('.ks-name').textContent = info.p.name;
+    } else { el.classList.remove('has'); }
+  });
+  if(!a || !b || !people.get(a) || !people.get(b)){
+    res.innerHTML = '<div class="kin-empty">Выберите двух Роббертсов — калькулятор найдёт нить, что их связывает.</div>';
+    return;
+  }
+  if(a === b){
+    res.innerHTML = '<div class="kin-empty">Один и тот же человек — тождественен сам себе.</div>';
+    return;
+  }
+  var kin = kinBetween(a, b);
+  var html = '';
+  if(kin){
+    var na = people.get(a).p, nb = people.get(b).p;
+    html += '<div class="kin-box kin-verdict">' +
+      '<div class="kin-row"><span class="kin-name">' + esc(nb.name) + '</span><span class="kin-sep">—</span><span class="kin-rel">' + esc(kin.bToA) + '</span></div>' +
+      '<div class="kin-row"><span class="kin-name">' + esc(na.name) + '</span><span class="kin-sep">—</span><span class="kin-rel">' + esc(kin.aToB) + '</span></div></div>';
+  }
+  var path = kinFindPath(a, b);
+  if(!path){
+    html += kin
+      ? '<div class="kin-how">Родня через брачные союзы рода — прямой кровной нити летопись не знает.</div>'
+      : '<div class="kin-note-off">Летопись не знает связи между этими людьми: нить не найдена ни кровью, ни браком.</div>';
+    res.innerHTML = html;
+    return;
+  }
+  html += '<div class="kin-chain">';
+  for(var i=0;i<path.length;i++){
+    html += kinChip(path[i]);
+    if(i < path.length-1){
+      html += '<div class="kin-step"><span class="ks-arr">▼</span><span class="ks-lbl">' +
+        esc(kinStepLabel(path[i], path[i+1])) + '</span></div>';
+    }
+  }
+  html += '</div>';
+  html += '<div class="kin-how">Читается сверху вниз: следующий — указанная родня предыдущего. Всего связей в нити: ' + (path.length-1) + '.</div>';
+  html += '<button class="p-locate kin-show" id="kinShow">' +
+    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>' +
+    'Показать путь на древе</button>';
+  res.innerHTML = html;
+  res.querySelector('#kinShow').addEventListener('click', function(){
+    closeDlg('kin');
+    showKinPath(kinFindPath(KINSEL.a, KINSEL.b));
+  });
+}
+function makeKinPicker(inpId, dropId, key){
+  var inp = q('#'+inpId), drop = q('#'+dropId);
+  if(!inp || !drop) return;
+  function render(v){
+    var list = INDEX.filter(function(p){ return p.name.toLowerCase().indexOf(v) >= 0; }).slice(0, 10);
+    drop.innerHTML = list.length
+      ? list.map(function(p){
+          return '<button class="s-item" data-id="' + p.id + '">' +
+            '<span class="s-dot" style="background:' + p.color + '"></span>' +
+            '<span class="s-name">' + esc(p.name) + '</span>' +
+            '<span class="s-meta">' + esc(p.meta) + '</span></button>';
+        }).join('')
+      : '<div class="s-empty">Никого не найдено</div>';
+    drop.classList.add('open');
+  }
+  inp.addEventListener('input', function(){
+    var v = inp.value.trim().toLowerCase();
+    if(v.length < 1){ drop.classList.remove('open'); return; }
+    render(v);
+  });
+  inp.addEventListener('focus', function(){
+    if(inp.value.trim().length >= 1) render(inp.value.trim().toLowerCase());
+  });
+  drop.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-id]');
+    if(!btn) return;
+    e.stopPropagation();
+    drop.classList.remove('open');
+    inp.value = '';
+    if(KINSEL[key] !== btn.dataset.id){ KINSEL[key] = btn.dataset.id; robreAch('kin'); }
+    renderKin();
+  });
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('#'+inpId) && !e.target.closest('#'+dropId)) drop.classList.remove('open');
+  });
+}
+function expandChainFor(id){
+  var cur = people.get(id).owner;
+  while(parentOf.has(cur.id)){ collapsed.delete(parentOf.get(cur.id).id); cur = parentOf.get(cur.id); }
+  var rt = rootOf.get(cur.id);
+  if(rt && rt !== TREE && rt.anchor){
+    var up = people.get(rt.anchor).owner;
+    while(parentOf.has(up.id)){ collapsed.delete(parentOf.get(up.id).id); up = parentOf.get(up.id); }
+  }
+}
+function showKinPath(path){
+  if(!path || !path.length) return;
+  window.robreClearKinPath();
+  path.forEach(expandChainFor);
+  var target = computeLayout();
+  reveal(target, true);
+  window.robreKinPath = new Set(path);
+  applyHighlight();
+  path.forEach(function(id){
+    var el = cardEls.get(id);
+    if(el) el.classList.add('pathe');
+  });
+  var x1=1e9, y1=1e9, x2=-1e9, y2=-1e9, ok=false;
+  path.forEach(function(id){
+    var p = target.pos.get(id);
+    if(p){ ok = true; x1=Math.min(x1,p.x); y1=Math.min(y1,p.y); x2=Math.max(x2,p.x+186); y2=Math.max(y2,p.y+64); }
+  });
+  if(ok) centerOn({ x:(x1+x2)/2, y:(y1+y2)/2 });
+  var bar = q('#kinBar');
+  q('#kinBarT').innerHTML = 'Путь родства: <b>' + (path.length-1) + '</b> ' +
+    (path.length-1 === 1 ? 'связь' : path.length-1 < 5 ? 'связи' : 'связей') +
+    ' · ' + esc(people.get(path[0]).p.name) + ' → ' + esc(people.get(path[path.length-1]).p.name);
+  if(bar) bar.classList.add('show');
+  robreAch('kinpath');
+}
+window.robreClearKinPath = function(){
+  if(window.robreKinPath){
+    window.robreKinPath = null;
+    cardEls.forEach(function(el){ el.classList.remove('pathe'); });
+    applyHighlight();
+  }
+  var bar = q('#kinBar');
+  if(bar) bar.classList.remove('show');
+};
+function bindKin(){
+  var btn = q('#btnKin'), dlg = q('#kin');
+  if(!btn || !dlg || dlg.dataset.f16) return;
+  dlg.dataset.f16 = '1';
+  btn.addEventListener('click', function(){ openDlg('kin'); });
+  q('#kinClose').addEventListener('click', function(){ closeDlg('kin'); });
+  dlg.addEventListener('click', function(e){
+    if(e.target === dlg){ closeDlg('kin'); return; }
+    var g = e.target.closest('[data-goto]');
+    if(g){ closeDlg('kin'); goToPerson(g.dataset.goto); }
+  });
+  q('#kinSwap').addEventListener('click', function(){
+    var t = KINSEL.a; KINSEL.a = KINSEL.b; KINSEL.b = t;
+    renderKin();
+  });
+  makeKinPicker('kinA', 'kinDropA', 'a');
+  makeKinPicker('kinB', 'kinDropB', 'b');
+  var bar = q('#kinBar');
+  if(bar && !bar.dataset.f16){
+    bar.dataset.f16 = '1';
+    q('#kinBarClear').addEventListener('click', function(){ window.robreClearKinPath(); });
+    q('#kinBarOpen').addEventListener('click', function(){ openDlg('kin'); });
+  }
+}
+
+/* ═══════════ 4. ТАЙМЛАЙН ПОКОЛЕНИЙ ═══════════ */
+
+var TL_NOW = 271, TL_MIN = 30, TL_X0 = 206, TL_W = 920;
+/* эпохи фоном: y2:null — разовая метка; годы приблизительные (ок.) — выверяются владельцем */
+var TL_EVENTS = [
+  { y1:39,  y2:null, t:'Диалтон уходит на юг' },
+  { y1:85,  y2:122,  t:'Тёмное время' },
+  { y1:115, y2:172,  t:'Войны с подгорьцами' },
+  { y1:200, y2:212,  t:'Походы Теодора Кеджина' },
+  { y1:203, y2:235,  t:'Соединение линий по Идее' },
+  { y1:240, y2:null, t:'Двойная свадьба дома Вум' },
+  { y1:243, y2:252,  t:'Смута Яльвы' }
+];
+function tlX(v){
+  var y = Math.max(TL_MIN, Math.min(TL_NOW, v));
+  return TL_X0 + (y - TL_MIN) / (TL_NOW - TL_MIN) * TL_W;
+}
+function parseYears(s){
+  var out = { b:null, d:null, alive:false };
+  if(!s || s === '—') return out;
+  if(/н\.в\./.test(s)) out.alive = true;
+  var parts = String(s).split(/[—–]/);
+  function num(t){ var a = (String(t).match(/\d{1,3}/g)||[]).map(Number); return a.length ? a[0] : null; }
+  if(parts.length > 1){
+    out.b = num(parts[0]);
+    if(!out.alive) out.d = num(parts[1]);
+  } else {
+    var n = num(s);
+    if(n == null) return out;
+    if(out.alive) out.b = n;
+    else if(/^\s*†/.test(s)) out.d = null;
+    else out.d = n;
+  }
+  return out;
+}
+var tlBuilt = false;
+function renderTline(){
+  var wrap = q('#tlWrap');
+  if(!wrap || tlBuilt) return;
+  tlBuilt = true;
+  var rows = [];
+  for(const [id,info] of people){
+    var y = parseYears(info.p.years);
+    if(y.b == null && y.d == null && !y.alive) continue;
+    rows.push({ id:id, name:info.p.name, years:info.p.years, c:colorOf(id), sp:info.isSpouse,
+                b:y.b, d:y.d, alive:y.alive });
+  }
+  rows.sort(function(r1, r2){
+    var a = r1.b != null ? r1.b : (r1.d != null ? r1.d - 80 : TL_NOW);
+    var b = r2.b != null ? r2.b : (r2.d != null ? r2.d - 80 : TL_NOW);
+    return (a - b) || r1.name.localeCompare(r2.name, 'ru');
+  });
+  var html = '<div class="tl-scroll"><div class="tl-in"><div class="tl-strip">';
+  for(var ty = 60; ty <= 270; ty += 30){
+    html += '<span class="tl-tick" style="left:' + tlX(ty).toFixed(1) + 'px">' + ty + '</span>';
+  }
+  TL_EVENTS.forEach(function(ev){
+    var x1 = tlX(ev.y1), x2 = ev.y2 != null ? tlX(ev.y2) : null;
+    if(x2 == null){
+      html += '<span class="tl-mark" style="left:' + x1.toFixed(1) + 'px" title="' + esc(ev.t) + ' (ок.)">◆<i>' + esc(ev.t) + '</i></span>';
+    } else {
+      var w = Math.max(2, x2 - x1);
+      html += '<span class="tl-band" style="left:' + x1.toFixed(1) + 'px;width:' + w.toFixed(1) + 'px" title="' + esc(ev.t) + ' (ок.)"><i>' + esc(ev.t) + '</i></span>';
+    }
+  });
+  html += '<span class="tl-now" style="left:' + tlX(TL_NOW).toFixed(1) + 'px"><i>сейчас · ' + TL_NOW + '</i></span>';
+  html += '</div><div class="tl-rows">';
+  rows.forEach(function(r){
+    var bar = '';
+    if(r.b != null){
+      var y2 = r.alive ? TL_NOW : (r.d != null ? r.d : Math.min(TL_NOW, r.b + 4));
+      var x1 = tlX(r.b), x2 = tlX(y2);
+      var w = Math.max(3, x2 - x1);
+      bar = '<span class="tl-bar" data-id="' + r.id + '" style="left:' + x1.toFixed(1) + 'px;width:' + w.toFixed(1) + 'px;background:' + r.c + '" title="' + esc(r.name) + ' · ' + esc(r.years) + '"></span>';
+    } else if(r.d != null){
+      var xd = tlX(r.d), xs = tlX(Math.max(TL_MIN, r.d - 55));
+      bar = '<span class="tl-bar ghost" data-id="' + r.id + '" style="left:' + xs.toFixed(1) + 'px;width:' + Math.max(3, xd - xs).toFixed(1) + 'px;background:' + r.c + '" title="' + esc(r.name) + ' · ' + esc(r.years) + ' (годы рождения неизвестны)"></span>';
+    }
+    var die = (!r.alive && r.d != null) ? '<span class="tl-die" style="left:' + tlX(r.d).toFixed(1) + 'px" title="Смерть: ' + esc(String(r.d)) + '">†</span>' : '';
+    html += '<div class="tl-row"><span class="tl-name" title="' + esc(r.name) + ' · ' + esc(r.years) + '">' + esc(r.name) + '</span>' + bar + die + '</div>';
+  });
+  html += '</div></div></div>';
+  wrap.innerHTML = html;
+  wrap.addEventListener('click', function(e){
+    var bar = e.target.closest('.tl-bar');
+    if(bar && bar.dataset.id){ closeDlg('tline'); goToPerson(bar.dataset.id); }
+  });
+}
+
+/* ═══════════ 5. ХРОНИКА ЭПОХ ═══════════ */
+
+var CHRON_ERAS = [
+  { t:'Тёмное время', items:[
+    { y:'смутно', h:'Безымянный родоначальник', p:'Был жил Робберт — смутная личность: летопись не помнит ни его дел, ни точных лет, ни лица. Даже фамилии он при жизни не носил; от неизвестной женщины породил Диалтона, через которого род и продолжился.', pid:'robbert' },
+    { y:'39', h:'Исход на юг', p:'В 39-м году Диалтон ушёл в южные края вместе с малолетним сыном: осели в Покирстоде, однако вскоре Диалтон призвался на военные действия — и к дому больше не вернулся.', pid:'dialton' },
+    { y:'ок. 85–120', h:'Детский дом при кладбище', p:'Уильям, смотритель кладбища, открыл при нём детский дом, где дети получали знания. Сам он называл это тёмным временем — но именно там род впервые научился держаться друг друга.', pid:'william' },
+    { y:'ок. 100', h:'Репрессия Яльвы', p:'Правитель Яльвы по надуманному поводу, со слов приёмных детей, отправил Уильяма биться насмерть на арене — но помиловали. Путь от садовника до главы образования был ещё впереди.', pid:'william' }
+  ]},
+  { t:'Основание династии · 85–122', items:[
+    { y:'85', h:'Первый из девяти', p:'Родился Бенджамин — старший сын, при котором династия Роббертсов встала на ноги. За ним пойдут Грегари, Тарренс, Стивен, Мануэль, Родни, Джейсон, Гэрри и Дол.', pid:'benjamin' },
+    { y:'122', h:'Барон Замка Роббертсов', p:'В 122 году Стивен стал Бароном Замка Роббертсов — титул, который основатель так и не переделал ни на кого другого.', pid:'steven' },
+    { y:'122', h:'Год трёх потерь', p:'Уильям пал в Покирстоде — в один день с сыном Родни; в тот же год на бугуртах пал и Дол, мечтавший о рыцарской славе. Династия выстояла.', pid:'william' }
+  ]},
+  { t:'Вартемберские земли', items:[
+    { y:'ок. 129–130', h:'Замки породнились с родом', p:'Маргарет Кадас стала супругой основателя; позже Офелия Сар вышла за Ричарда — так замки Кадас и Сара в Басло-фирентийских землях связали судьбу с Роббертсами.', pid:'kadas' },
+    { y:'ок. 130', h:'Баронский титул', p:'Тарренс обменял небольшое состояние на династический союз с леди Кейт Карлай — единственной наследницей баронства. Роббертсы стали официальным вартемберским баронским титулом.', pid:'tarrens' },
+    { y:'152', h:'Бастард Джордж', p:'У Бенджамина, в военном походе, родился бастард Джордж — родство пришлось доказывать с трудом. Именно он позже соединит первую и вторую линии.', pid:'george' },
+    { y:'172', h:'Магическая болезнь', p:'Бенджамин пал: восемьдесят семь лет войн с тёмными подгорьскими силами закончились заразной магической болезнью, которой его наградили подгорьцы.', pid:'benjamin' },
+    { y:'181', h:'Кардинал Гэрри', p:'Гэрри вернулся на континент и получил звание кардинала — с правом выбирать следующего Храмовника в вартемберских краях. Первый, кто открыто выступил против Идеи Сильнейшей Крови.', pid:'gerri' },
+    { y:'186', h:'Графство Стивена', p:'Стивен получил титул Графа и целый округ в Королевстве Драгонов; с графством появилась и жена, а затем — единственная дочь.', pid:'steven' },
+    { y:'187', h:'Магическое истощение', p:'Джейсон, больше всех унаследовавший магического, пал от чрезмерной траты сил. Его смуглая линия продолжилась через бастарда Ахму.', pid:'jason' }
+  ]},
+  { t:'Идея Сильнейшего', items:[
+    { y:'завещание', h:'Завещание основателя', p:'Роббертсы чтят самопожертвование, держатся друг друга и не враждуют. Сильная кровь позволила многим изменить судьбу: каждый потомок идёт путём, который выбрал сам.', pid:'william' },
+    { y:'поздняя', h:'План соединения линий', p:'Позднейшая идея рода: объединить все линии воедино и взрастить Сильнейшего Роббертса. Бенджаминиды с Грегаридами, Тарренсиды со Стивенсидами, Мануэлиды с Родридами — линии сходятся.', pid:'william' },
+    { y:'ок. 207', h:'Первая и вторая линии', p:'Джордж, гонимый Идеей, убедил столетнего Грегари зачать дочь — и женился на ней около 207-го. Так первая и вторая линии стали одной.', pid:'george' },
+    { y:'ок. 220', h:'Мануэлиды и Родриды', p:'Дэниэль взял в жёны Зеру — бастардку морехода Теодорика: фамилию оставили Роббертс, ибо считали себя старшим родом Южного континента.', pid:'daniel' },
+    { y:'220-е', h:'Породнения Мырлеанских', p:'Семьи Владислава-с-Алиной и Владимира-с-Полиной соединились вновь, ведомые Идеей; из этих уз вышел Егор Мырлеанский — муж третьей Ширли.', pid:'egor' },
+    { y:'наши дни', h:'Четыре помолвки', p:'Марк и Егория, Гий и Джикия, Мишель и Ерорий, Андрей и Дэниэла — четыре помолвки замыкают линии. Баттлериды остаются изгоями общего движения — хотя именно они правят Яльвой.' }
+  ]},
+  { t:'Войны и смуты', items:[
+    { y:'115–172', h:'Подгорьские войны', p:'Восемьдесят семь лет Бенджамин воевал с тёмными подгорьскими силами; Мануэль и Родни начинали на стороне вартемберцев, затем перешли к Драгонам.' },
+    { y:'200-е', h:'Походы Теодора Кеджина', p:'Войско Кеджина разоряло земли: Грегари утонул, спасаясь бегством из своего особняка; самое южное баронство Таррестивии было разорено — остальное герцогство выстояло.', pid:'gregari' },
+    { y:'240-е', h:'Битва за Апостольск', p:'Джейкоб I, символ Сражения за Апостольск, выжил после смертельного облака яда чудом Покирстодова; выкуп из баббахистского плена — 8 000 000 дененов; «Да будет мир» — мир с Роудом Вальтером.', pid:'jacob' },
+    { y:'240-е', h:'Бунт Альфрея Мерса', p:'Альфрей возглавил бунт против самовластия Квилианы Зенской с 9 900 войсками — и победил: Дукат разделён, священство Квила объединено, Вальзенберия объявлена особой территорией.', pid:'alfrey' }
+  ]},
+  { t:'Наши дни · 271 год', items:[
+    { y:'271', h:'Линии сходятся', p:'Живые главы линий держат земли от Яльвы до Южного континента: герцогиня Таррестивии, барон Бендгрегарии, архонт Фиренции, граф Джейгэрдолмэра — всем понятен общий план соединить род воедино.', pid:'egoriya' },
+    { y:'271', h:'Наследник Альфред', p:'Долгожданный наследник Джейкоба I и Марьяны Вум — Альфред, рождённый 242-го после долгих лет ожидания и лечения; мальчик, выживший чудом Покирстодова.', pid:'alfred' },
+    { y:'271', h:'Четыре века замков', p:'Кадасы и Сары ведут род около четырёх веков: Александр и его наследник Альберт держат замки в Басло-фирентийских землях — тихо, спокойно и долго.', pid:'alexk' }
+  ]}
+];
+var chronBuilt = false;
+function renderChron(){
+  var el = q('#chronRows');
+  if(!el || chronBuilt) return;
+  chronBuilt = true;
+  el.innerHTML = CHRON_ERAS.map(function(era){
+    return '<div class="ch-era"><span class="ch-era-t">' + esc(era.t) + '</span></div>' +
+      era.items.map(function(it){
+        return '<div class="ch-item"><div class="ch-y">' + esc(it.y) + '</div>' +
+          '<div class="ch-b"><h4>' + esc(it.h) + '</h4><p>' + esc(it.p) + '</p>' +
+          (it.pid ? '<button class="ch-go" data-goto="' + it.pid + '">Карточка в древе →</button>' : '') +
+          '</div></div>';
+      }).join('');
+  }).join('');
+}
+
+/* ═══════════ 6. ГЛОССАРИЙ ═══════════ */
+
+var GLOSSARY = [
+  { t:'Идея Сильнейшего', tag:'замысел', d:'Позднейшая идея рода: объединить все линии воедино и взрастить Сильнейшего Роббертса — существо с огромными способностями. К нашим дням линии соединяются браками и помолвками.', pid:'william' },
+  { t:'Сильная кровь', tag:'магия', d:'Дар всех родных Роббертсов: магический потенциал, жизнь до двух веков (как правило — от полутора) и сильная магия крови.' },
+  { t:'Магия крови', tag:'магия', d:'Родовая сила, живущая в крови Роббертсов; чем чище и сильнее кровь, тем могущественнее её носитель.' },
+  { t:'Псионическая связь', tag:'магия', d:'Вблизи, до пары километров, родня Роббертсов говорит между собой псионически — без слов и писем.' },
+  { t:'Магическое истощение', tag:'магия', d:'Гибель от чрезмерной траты магии: так пал Джейсон в 187-м, так незаметно угасла тень династии Ричард.', pid:'jason' },
+  { t:'Кристальная болезнь', tag:'магия', d:'Недуг, от которого Мануэль добыл лекарство в Оазисе и выторговал его — спасая Стивена и ещё нескольких близких.', pid:'manuel' },
+  { t:'Тоскливая эпидемия', tag:'магия', d:'Мор, обрушившийся на мужскую часть Артуридов: пали Артур, Ихаэл, Габриэл, Рифаэл, Муриэл, Рагуэл и Сериел.', pid:'arthur' },
+  { t:'Роббертсы', tag:'род', d:'Династия первых Дуксов Центроземья: восемь поколений, семь линий, дома Кадас, Сар и Вум. Девиз — «Мы сможем всё», символ — Золотая Щука.' },
+  { t:'Робберт', tag:'род', d:'Родоначальник: смутная личность без фамилии, малообразованный крестьянин. Унёсла эпидемия хаоса на восьмом десятке лет.', pid:'robbert' },
+  { t:'Золотая Щука', tag:'символ', d:'Символ дома Роббертсов. Девиз дома — «Мы сможем всё».' },
+  { t:'Кадас', tag:'дом', d:'Династия супруги основателя: вартемберский странник четыре века назад поддержал графа и возвёл замок в Басло-фирентийских землях. Нынешний глава — Александр Кадас.', pid:'alexk' },
+  { t:'Сар', tag:'дом', d:'Династия матери Ричардовой ветви: замок Сара — по соседству с замком Кадас. Нынешний глава — Александр Сар, наследник — Альберт.', pid:'alexs' },
+  { t:'Вум', tag:'дом', d:'Купеческий дом: небогатый купец с добрым имением. Марьяна Вум стала супругой Джейкоба I — так дом породнился с родом.', pid:'maryana' },
+  { t:'Стивенсиды', tag:'линия', d:'Линия Стивена: основатель завещал роду Стивенсидов быть главным. Через единственную дочь Стивена линия соединилась с Тарренсидами.', pid:'steven' },
+  { t:'Баттлериды', tag:'линия', d:'Яльвинские Роббертсы: прочие линии зовут их «грязными Роббертсами» по заветам основателя — хотя именно Баттлериды правят Яльвой.', pid:'buttler' },
+  { t:'Бенджаминиды', tag:'линия', d:'Первая линия, идущая от старшего сына Бенджамина; её продолжение — барон Марк Бендгрегарии, помолвленный с Егорией.', pid:'mark' },
+  { t:'Грегариды', tag:'линия', d:'Линия ювелира Грегари; соединилась с Бенджаминидами браком его единственной дочери и Джорджа — продолжение через внука Марка.', pid:'gregari' },
+  { t:'Тарренсиды', tag:'линия', d:'Линия Тарренса и леди Кейт Карлай, давшая роду баронский титул Вартемберии; далее — через дочь Стивена — к герцогине Егории.', pid:'tarrens' },
+  { t:'Мануэлиды', tag:'линия', d:'Линия Мануэля и Авигайлы; сын Дэниэл соединил её с Родридами, взяв Зеру — бастардку морехода Теодорика.', pid:'daniel' },
+  { t:'Родриды', tag:'линия', d:'Линия морехода Теодорика и его дочери Зеры; из неё вышел архонт Фиренции Гий.', pid:'giiy' },
+  { t:'Джейсониды', tag:'линия', d:'Линия мага Джейсона, продолжившаяся в смуглых землях через бастарда Ахму; дочь Джикия помолвлена с Гием.', pid:'ahma' },
+  { t:'Гэрриды', tag:'линия', d:'Линия кардинала Гэрри — без брака: семя, добытое Ахмой тёмной интригой, дало роду Джикию.', pid:'gerri' },
+  { t:'Долиды', tag:'линия', d:'Линия Дола и леди Фародеи; через Думбаля и Эйрика продолжилась во внуке — графе Гуме.', pid:'gum' },
+  { t:'Мэриды', tag:'линия', d:'Линия, вошедшая в род через Мулью из Смуглых земель — жену Эйрика: их сын Гедрик, внук — граф Гум.', pid:'gedrik' },
+  { t:'Бертиды', tag:'линия', d:'Ветвь Эльфийского Альбиона; соединится с Артуридами браком Ерория и баронессы Мишель.', pid:'eroriy' },
+  { t:'Артуриды', tag:'линия', d:'Линия Артура-поэта; мужская часть пала от тоскливой эпидемии, род продолжился через Ерория — кровь сразу всех потомков Артура.', pid:'arthur' },
+  { t:'Лореттиды', tag:'линия', d:'Линия Лоретты, павшей в одном из набегов; соединилась с Ширлитидами.', pid:'loretta' },
+  { t:'Ширлитиды', tag:'линия', d:'Линия трёх Ширли подряд; последние пали от наследственных болезней — Дэниэла замыкает седьмую линию помолвкой с Андреем.', pid:'daniela' },
+  { t:'Мырлеанские', tag:'дом', d:'Не Роббертсы, но породнившиеся: в 220-е семьи Владислава-с-Алиной и Владимира-с-Полиной соединились ради Идеи; Егор Мырлеанский взял Ширли.', pid:'egor' },
+  { t:'Покирстод', tag:'место', d:'Южный город, где осели Диалтон с сыном; здесь Уильям начинал при кладбище, здесь же пал. Покирстодовые земли — святые для династии.' },
+  { t:'Яльва', tag:'место', d:'Держава, которой ныне правят Роббертсы: Леонард — Царь Центроземья, Джейкоб — Патриарх. Баттлериды — единственные кровные Роббертсы в Яльве.' },
+  { t:'Вартемберия', tag:'место', d:'Земли, где род получил баронский титул через брак Тарренса и леди Кейт Карлай; отсюда род начинал восхождение.' },
+  { t:'Центроземье', tag:'место', d:'Сердце известных земель; Роббертсы — первые Дуксы Центроземья.' },
+  { t:'Таррестивия', tag:'место', d:'Богатейшее прибрежное герцогство Егории — важный морской узел между островитянами и побережьем Западного континента.', pid:'egoriya' },
+  { t:'Бендгрегария', tag:'место', d:'Небогатое приморское баронство Марка — с одним имением и почти без крепостных, ещё не оправившееся от войны с Теодором Кеджином.', pid:'mark' },
+  { t:'Фиренция', tag:'место', d:'Республика полисов Южного континента; совет полисов избрал архонтом Гия Дэниовича Роббертса.', pid:'giiy' },
+  { t:'Королевство Драгонов', tag:'место', d:'Держава, давшая Стивену в 186-м графство с целым округом.', pid:'steven' },
+  { t:'Апостольск', tag:'место', d:'Город великой битвы: Джейкоб I — символ Сражения за Апостольск; погребён с оружием и регалиями в Соборе Святого Воинства.', pid:'jacob' },
+  { t:'Эльфийский Альбион', tag:'место', d:'Эльфийские земли, где прославился вундеркинд Ерорий; эльфы прощались с Артуром несколько недель.', pid:'eroriy' },
+  { t:'Оазис', tag:'место', d:'Место, где Мануэль нашёл лекарство от кристальной болезни — и выторговал его, спасая близких.', pid:'manuel' },
+  { t:'Норд-Сторм', tag:'место', d:'Сиротский дом, где начинал путь берсерк Эйрик после того, как его покинула мать.', pid:'eirik' },
+  { t:'Спендеркук', tag:'место', d:'Знаменитая добыча авантюристов: в грабеже Спендеркука участвовал Мануэль Роббертс.', pid:'manuel' },
+  { t:'Южный континент', tag:'место', d:'Земли экспедиций: здесь пал Диалтон в битве с племийскими кочевниками, здесь пал Эйрик, здесь правит архонт Фиренции.' },
+  { t:'Западный континент', tag:'место', d:'Континент дворов и драгоценностей: почти сто лет изделия Грегари шли во все правящие дворы.' },
+  { t:'Дукс', tag:'титул', d:'Правитель земель; Роббертсы — первые Дуксы Центроземья.' },
+  { t:'Казилин', tag:'титул', d:'Высшая должность Яльвы: Гальяна — четвёртый Казилин, Леонард — 5/6/7-й.', pid:'leonard' },
+  { t:'Саккеларий', tag:'титул', d:'Должность Леонарда перед Казилином — бессменный Саккеларий, основатель Покирстодской Инспекции.', pid:'leonard' },
+  { t:'Патриарх', tag:'титул', d:'Глава всея Покирстодовых земель: Джейкоб I — XI Патриарх.', pid:'jacob' },
+  { t:'Архонт', tag:'титул', d:'Правитель Республики Фиренция; избирается советом полисов.', pid:'giiy' },
+  { t:'Регент', tag:'титул', d:'Временный правитель: Джейкоб был регентом Окурка, Альфрей Мерс — регент Накрая.' },
+  { t:'Храмовник', tag:'титул', d:'Глава Храмовничьего ордена; Бенджамин был претендентом на роль Храмовника.', pid:'benjamin' },
+  { t:'Кардинал', tag:'титул', d:'Звание Гэрри с 181 года — с правом выбирать следующего Храмовника в вартемберских краях.', pid:'gerri' },
+  { t:'Прониары', tag:'орган', d:'Совет, разбирающий в Яльве дела о работорговле — вместе с Турмархами и с учётом заслуг перед державой.' },
+  { t:'Сдерживающий Совет', tag:'орган', d:'Совет, через который Леонард провёл полный запрет рабства в Яльве — без единого исключения; он же одобряет законы Республики.' },
+  { t:'Покирстодская Инспекция', tag:'орган', d:'Основана Леонардом: без пыток, презумпция невиновности, автономия — Принципы Инспекции.', pid:'leonard' },
+  { t:'Святой Орден', tag:'орган', d:'Воинский орден, реорганизованный Джейкобом I после плена и мира с Роудом Вальтером.', pid:'jacob' },
+  { t:'Денены', tag:'прочее', d:'Деньги земель: выкуп Джейкоба из плена — 8 000 000 дененов, ГЭП Гальяны — 25,2 млн.' },
+  { t:'ГЭП', tag:'прочее', d:'Гальянская Экономическая Политика на 25,2 млн дененов с 5-летним перемирием; автор — четвёртый Казилин.', pid:'galiana' },
+  { t:'Бугурты', tag:'прочее', d:'Рыцарские бои-представления: на них мечтал о славе Дол — и на них же пал ещё при жизни отца.', pid:'dol' },
+  { t:'Баббахисты', tag:'народ', d:'Народие смуглых земель; Роднихаим Ибн Хаджимурадов — главком смуглых баббахистов, взявший в плен собственного отца.', pid:'rodney_b' },
+  { t:'Подгорьцы', tag:'народ', d:'Тёмные силы подгорьских земель: с ними Бенджамин воевал восемьдесят семь лет; они же заразили его магической болезнью.', pid:'benjamin' },
+  { t:'Островитяне', tag:'народ', d:'Народы островов и прибережий: среди них командовал Мануэль в Басло-Фирентийском регионе; их войсками сражался Баттлер.' },
+  { t:'Племийские кочевники', tag:'народ', d:'Кочевники Южного континента, в битве с которыми пал Диалтон.', pid:'dialton' }
+];
+var GLOSS_BY = null, GLOSS_RX = null, GLOSS_RX_TEST = null, GLOSS_TERM_RX = null;
+function glossCompile(){
+  if(GLOSS_RX) return;
+  GLOSS_BY = {};
+  GLOSSARY.forEach(function(g){ GLOSS_BY[g.t.toLowerCase()] = g; });
+  var terms = GLOSSARY.map(function(g){ return g.t; }).sort(function(a,b){ return b.length - a.length; });
+  function wordRe(w){
+    return w.split(/\s+/).map(function(part){
+      var p = part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      var n = p.length;
+      if(n <= 4) return p;
+      var stem = n > 7 ? p.slice(0, n-3) : p.slice(0, n-2);
+      return stem + '[а-яё\\w]{0,' + (n - stem.length + 3) + '}';
+    }).join('[\\s\\u00a0]+');
+  }
+  var body = terms.map(wordRe).join('|');
+  try{ GLOSS_RX = new RegExp('(?<![\\wа-яёА-ЯЁ])(' + body + ')', 'gi'); }
+  catch(e){ GLOSS_RX = new RegExp('(' + body + ')', 'gi'); }
+  GLOSS_RX_TEST = new RegExp(GLOSS_RX.source, 'i');
+  GLOSS_TERM_RX = terms.map(function(t){
+    return { g:t, rx:new RegExp('^(?:' + wordRe(t) + ')$', 'i') };
+  });
+}
+function glossMatch(word){
+  if(!GLOSS_TERM_RX) return null;
+  for(var i=0;i<GLOSS_TERM_RX.length;i++)
+    if(GLOSS_TERM_RX[i].rx.test(word.trim())) return GLOSS_BY[GLOSS_TERM_RX[i].g.toLowerCase()];
+  return null;
+}
+function glossify(root){
+  if(!root || root.nodeType !== 1 || !GLOSS_RX) return;
+  if(root.closest && (root.closest('#gloss') || root.closest('#gtip') || root.closest('#moreMenu'))) return;
+  var walker;
+  try{
+    walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode:function(n){
+      if(!n.nodeValue || n.nodeValue.length < 4) return NodeFilter.FILTER_REJECT;
+      var p = n.parentElement;
+      if(!p || p.closest('.gterm, input, textarea, script, style, #gtip, #gloss')) return NodeFilter.FILTER_REJECT;
+      return GLOSS_RX_TEST.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    }});
+  }catch(e){ return; }
+  var nodes = [], tn;
+  while(walker.nextNode()) nodes.push(walker.currentNode);
+  if(!nodes.length) return;
+  nodes.forEach(function(node){
+    GLOSS_RX.lastIndex = 0;
+    var txt = node.nodeValue, frag = document.createDocumentFragment(), last = 0, m;
+    while((m = GLOSS_RX.exec(txt))){
+      if(m.index > last) frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
+      var g = glossMatch(m[1]);
+      var sp = document.createElement('span');
+      sp.className = 'gterm';
+      sp.textContent = m[1];
+      sp.tabIndex = 0;
+      if(g) sp.dataset.gterm = g.t;
+      frag.appendChild(sp);
+      last = m.index + m[1].length;
+    }
+    if(last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  });
+}
+var glMo = null;
+function setupGlossify(){
+  if(glMo) return;
+  glossCompile();
+  glMo = new MutationObserver(function(muts){
+    for(var i=0;i<muts.length;i++){
+      var ad = muts[i].addedNodes;
+      for(var j=0;j<ad.length;j++){
+        if(ad[j].nodeType === 1) glossify(ad[j]);
+      }
+    }
+  });
+  ['#panel', '#topsRows', '#chronRows'].forEach(function(sel){
+    var el = q(sel);
+    if(el) glMo.observe(el, { childList:true });
+  });
+}
+var glTipShown = null;
+function hideTip(){
+  var tip = q('#gtip');
+  if(tip) tip.classList.remove('show');
+  glTipShown = null;
+}
+function showTip(el){
+  var t = el.dataset.gterm; if(!t) return;
+  var g = GLOSS_BY[t.toLowerCase()]; if(!g) return;
+  if(glTipShown === el) return;
+  var tip = q('#gtip');
+  tip.innerHTML = '<div class="gt-t">' + esc(g.t) + '</div><div class="gt-d">' + esc(g.d) + '</div>' +
+    (g.pid ? '<button class="gt-go" data-goto="' + g.pid + '">Карточка в древе →</button>' : '');
+  tip.classList.add('show');
+  tip.style.left = '0px'; tip.style.top = '0px';
+  var r = el.getBoundingClientRect(), tr = tip.getBoundingClientRect();
+  var x = Math.max(8, Math.min(r.left + r.width/2 - tr.width/2, window.innerWidth - tr.width - 8));
+  var y = r.top - tr.height - 10;
+  if(y < 8) y = Math.min(r.bottom + 10, window.innerHeight - tr.height - 8);
+  tip.style.left = x.toFixed(0) + 'px';
+  tip.style.top = y.toFixed(0) + 'px';
+  glTipShown = el;
+  robreAch('term', g.t);
+}
+var glBuilt = false;
+function renderGloss(){
+  var el = q('#glRows');
+  if(!el) return;
+  if(!glBuilt){
+    glBuilt = true;
+    q('#glSearch').addEventListener('input', renderGlossList);
+  }
+  renderGlossList();
+}
+function renderGlossList(){
+  var el = q('#glRows');
+  var v = (q('#glSearch').value || '').trim().toLowerCase();
+  var list = GLOSSARY.filter(function(g){
+    return !v || g.t.toLowerCase().indexOf(v) >= 0 || g.d.toLowerCase().indexOf(v) >= 0;
+  });
+  el.innerHTML = list.length
+    ? list.map(function(g){
+        return '<div class="gl-item"><span class="gl-term">' + esc(g.t) + '</span><span class="gl-tag">' + esc(g.tag) + '</span>' +
+          '<div class="gl-def">' + esc(g.d) + '</div></div>';
+      }).join('')
+    : '<div class="kin-empty">Такого термина в словаре пока нет.</div>';
+}
+function bindGloss(){
+  var btn = q('#btnGloss'), dlg = q('#gloss');
+  if(!btn || !dlg || dlg.dataset.f16) return;
+  dlg.dataset.f16 = '1';
+  btn.addEventListener('click', function(){ openDlg('gloss'); });
+  q('#glossClose').addEventListener('click', function(){ closeDlg('gloss'); });
+  dlg.addEventListener('click', function(e){ if(e.target === dlg) closeDlg('gloss'); });
+}
+
+/* ═══════════ 7. СКЛЕЙКА: ДИАЛОГИ, КНОПКИ, МЕНЮ, ХУКИ ═══════════ */
+
+var F16_DLGS = ['kin', 'tline', 'chron', 'gloss', 'ach'];
+function openDlg(id){
+  F16_DLGS.forEach(function(d){
+    var el = q('#' + d);
+    if(el) el.classList.toggle('open', d === id);
+  });
+  try{ if(typeof closeTops === 'function') closeTops(); }catch(e){}
+  var lib = q('#lib'); if(lib) lib.classList.remove('open');
+  var mm = q('#moreMenu'); if(mm) mm.classList.remove('open');
+  if(id === 'kin') renderKin();
+  if(id === 'tline'){ renderTline(); robreAch('timeline'); }
+  if(id === 'chron'){ renderChron(); robreAch('chron'); }
+  if(id === 'gloss'){ renderGloss(); robreAch('gloss'); }
+  if(id === 'ach') renderAch();
+}
+function closeDlg(id){
+  var el = q('#' + id);
+  if(el) el.classList.remove('open');
+}
+function bindTline(){
+  var btn = q('#btnTline'), dlg = q('#tline');
+  if(!btn || !dlg || dlg.dataset.f16) return;
+  dlg.dataset.f16 = '1';
+  btn.addEventListener('click', function(){ openDlg('tline'); });
+  q('#tlClose').addEventListener('click', function(){ closeDlg('tline'); });
+  dlg.addEventListener('click', function(e){ if(e.target === dlg) closeDlg('tline'); });
+}
+function bindChron(){
+  var btn = q('#btnChron'), dlg = q('#chron');
+  if(!btn || !dlg || dlg.dataset.f16) return;
+  dlg.dataset.f16 = '1';
+  btn.addEventListener('click', function(){ openDlg('chron'); });
+  q('#chronClose').addEventListener('click', function(){ closeDlg('chron'); });
+  dlg.addEventListener('click', function(e){
+    if(e.target === dlg) return;
+    var g = e.target.closest('[data-goto]');
+    if(g){ closeDlg('chron'); goToPerson(g.dataset.goto); }
+  });
+}
+function bindMore(){
+  var btn = q('#btnMore'), mm = q('#moreMenu');
+  if(!btn || !mm || btn.dataset.f16) return;
+  btn.dataset.f16 = '1';
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    mm.classList.toggle('open');
+  });
+  mm.addEventListener('click', function(e){
+    var r = e.target.closest('[data-act]');
+    if(!r) return;
+    mm.classList.remove('open');
+    var act = r.dataset.act;
+    if(act === 'filters'){
+      renderFpanel();
+      q('#fpanel').classList.toggle('open');
+    } else openDlg(act);
+  });
+  document.addEventListener('click', function(e){
+    if(mm.classList.contains('open') && !e.target.closest('#moreMenu') && !e.target.closest('#btnMore'))
+      mm.classList.remove('open');
+  });
+}
+function bindHooks(){
+  /* хук читалки: перелистывание листа → «прочитал главу» при смене раздела */
+  document.addEventListener('rd:flip', function(e){
+    var d = e.detail || {};
+    if(d.fwd && d.to && d.to !== 'Обложка' && d.to !== d.from) robreAch('chapter');
+  });
+  /* хук библиотеки */
+  document.addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('#btnLibrary')){
+      setTimeout(function(){
+        var lib = q('#lib');
+        if(lib && lib.classList.contains('open')) robreAch('library');
+      }, 250);
+    }
+  }, true);
+  /* подсказки терминов */
+  document.addEventListener('mouseover', function(e){
+    var t = e.target.closest ? e.target.closest('.gterm') : null;
+    if(t) showTip(t);
+  });
+  document.addEventListener('mouseout', function(e){
+    var t = e.target.closest ? e.target.closest('.gterm') : null;
+    if(t && glTipShown === t) hideTip();
+  });
+  document.addEventListener('focusin', function(e){
+    var t = e.target.closest ? e.target.closest('.gterm') : null;
+    if(t) showTip(t);
+  });
+  document.addEventListener('click', function(e){
+    var go = e.target.closest ? e.target.closest('#gtip [data-goto]') : null;
+    if(go){
+      hideTip();
+      F16_DLGS.forEach(closeDlg);
+      goToPerson(go.dataset.goto);
+      return;
+    }
+    var t = e.target.closest ? e.target.closest('.gterm') : null;
+    if(t) showTip(t); else hideTip();
+  });
+  document.addEventListener('scroll', hideTip, true);
+  /* Escape: подсказка → фильтры → мои диалоги → путь родства */
+  document.addEventListener('keydown', function(e){
+    if(e.key !== 'Escape') return;
+    var tip = q('#gtip');
+    if(tip && tip.classList.contains('show')){ hideTip(); return; }
+    var fp = q('#fpanel');
+    if(fp && fp.classList.contains('open')){ fp.classList.remove('open'); return; }
+    for(var i=0;i<F16_DLGS.length;i++){
+      var el = q('#' + F16_DLGS[i]);
+      if(el && el.classList.contains('open')){ closeDlg(F16_DLGS[i]); return; }
+    }
+    if(window.robreKinPath) window.robreClearKinPath();
+  }, true);
+}
+(function initF16(){
+  bindAch();
+  bindFilters();
+  bindKin();
+  bindTline();
+  bindChron();
+  bindGloss();
+  bindMore();
+  bindHooks();
+  setupGlossify();
+  renderKin();
+})();
+})(); /* конец модульного IIFE, открытого в f16_js_a.js */
+/*__F16_JS_END__*/
+</script>
+
 
 <div id="intro" aria-label="Заставка дома">
   <div class="in-glow"></div>
